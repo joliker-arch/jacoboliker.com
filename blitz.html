@@ -1,0 +1,1419 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jacob Oliker · Blitz NIL Outreach</title>
+<meta name="description" content="Blitz — an outbound prospecting platform for college athletes. Built solo as an MVP on Next.js, Supabase, and n8n.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..900,0..100&family=Inter+Tight:wght@300..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   SHARED SHELL — JACOB OLIKER PORTFOLIO
+   Editorial · technical · dark
+   ============================================================ */
+
+:root {
+  --bg:        #0E0F12;
+  --bg-warm:   #14151A;
+  --bg-panel:  #1A1B20;
+  --line:      #2A2B31;
+  --line-soft: #1F2025;
+  --ink:       #F2EFE8;
+  --ink-mute:  #B8B4A8;
+  --ink-dim:   #75726A;
+  --accent:    #C8553D;
+  --accent-2:  #E8A87C;
+  --ok:        #6B9080;
+
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'Inter Tight', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+
+  --max: 1240px;
+  --gutter: clamp(20px, 4vw, 56px);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.6;
+  font-weight: 380;
+  letter-spacing: -0.005em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+::selection { background: var(--accent); color: var(--bg); }
+
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+.wrap { max-width: var(--max); margin: 0 auto; padding: 0 var(--gutter); }
+section { position: relative; }
+
+h1, h2, h3, h4 { font-family: var(--serif); font-weight: 360; letter-spacing: -0.02em; }
+
+.display {
+  font-family: var(--serif);
+  font-weight: 280;
+  font-size: clamp(48px, 7.4vw, 104px);
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+  font-variation-settings: 'opsz' 144, 'SOFT' 30;
+}
+.display em {
+  font-style: italic;
+  font-weight: 320;
+  color: var(--accent);
+  font-variation-settings: 'opsz' 144, 'SOFT' 60;
+}
+
+.h-section {
+  font-family: var(--serif);
+  font-weight: 320;
+  font-size: clamp(36px, 5.5vw, 68px);
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  font-variation-settings: 'opsz' 96, 'SOFT' 30;
+}
+.h-section em { font-style: italic; color: var(--accent); }
+
+.h-sub {
+  font-family: var(--serif);
+  font-weight: 380;
+  font-size: clamp(22px, 2.4vw, 30px);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 24;
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--accent);
+  display: inline-block;
+}
+
+.lede {
+  font-family: var(--serif);
+  font-weight: 320;
+  font-size: clamp(20px, 2vw, 24px);
+  line-height: 1.45;
+  color: var(--ink-mute);
+  letter-spacing: -0.01em;
+  font-variation-settings: 'opsz' 24;
+  max-width: 62ch;
+}
+
+.body { max-width: 62ch; color: var(--ink-mute); }
+.body p + p { margin-top: 1em; }
+.body strong { color: var(--ink); font-weight: 500; }
+
+.mono { font-family: var(--mono); font-size: 0.86em; color: var(--ink-mute); letter-spacing: -0.01em; }
+
+/* NAV */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 50;
+  padding: 18px 0;
+  background: rgba(14,15,18,0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.nav-inner { display: flex; align-items: center; justify-content: space-between; }
+.nav-logo {
+  font-family: var(--mono); font-size: 12px; font-weight: 500;
+  letter-spacing: 0.12em; color: var(--ink); text-transform: uppercase;
+  text-decoration: none; transition: opacity 0.2s;
+}
+.nav-logo:hover { opacity: 0.85; }
+.nav-logo .dot {
+  display: inline-block; width: 7px; height: 7px;
+  background: var(--accent); border-radius: 50%;
+  margin-right: 9px; vertical-align: middle;
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.85); }
+}
+.nav-links {
+  display: flex; gap: 32px;
+  font-family: var(--mono); font-size: 11.5px; font-weight: 500;
+  letter-spacing: 0.08em; text-transform: uppercase;
+}
+.nav-links a {
+  color: var(--ink-mute); text-decoration: none;
+  transition: color 0.2s; position: relative;
+}
+.nav-links a:hover { color: var(--accent); }
+.nav-links a.is-active { color: var(--ink); }
+.nav-links a.is-active::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -22px;
+  height: 1px; background: var(--accent);
+}
+@media (max-width: 720px) { .nav-links { gap: 20px; font-size: 10.5px; } }
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  min-height: 100vh;
+  display: flex; align-items: center;
+  padding: 120px 0 80px;
+  position: relative;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+  align-items: start;
+}
+@media (min-width: 900px) {
+  .hero-grid { grid-template-columns: 7fr 5fr; gap: 80px; }
+}
+.hero-tag { margin-bottom: 32px; }
+
+.hero-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px 40px;
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-dim);
+  border-top: 1px solid var(--line);
+  padding-top: 28px;
+}
+.hero-meta dt { color: var(--ink-dim); margin-bottom: 4px; font-size: 10.5px; }
+.hero-meta dd { color: var(--ink); font-size: 13px; line-height: 1.4; letter-spacing: 0; text-transform: none; }
+.hero-meta dd em { color: var(--accent); font-style: normal; }
+.hero-meta dd a { color: var(--ink); border-bottom: 1px solid var(--line); text-decoration: none; }
+.hero-meta dd a:hover { border-color: var(--accent); color: var(--accent); }
+
+.hero-side {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 19px;
+  font-weight: 360;
+  line-height: 1.45;
+  color: var(--ink-mute);
+  border-left: 1px solid var(--accent);
+  padding-left: 28px;
+  max-width: 380px;
+  font-variation-settings: 'opsz' 18, 'SOFT' 60;
+}
+.hero-side .by {
+  display: block; font-style: normal;
+  font-family: var(--mono); font-size: 11px;
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-dim); margin-top: 16px;
+}
+
+.metric-strip {
+  margin-top: 80px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+@media (min-width: 700px) { .metric-strip { grid-template-columns: repeat(4, 1fr); } }
+.metric { background: var(--bg); padding: 28px 24px; position: relative; }
+.metric .num {
+  font-family: var(--serif);
+  font-weight: 280;
+  font-size: clamp(36px, 4.2vw, 52px);
+  line-height: 1; color: var(--ink);
+  letter-spacing: -0.03em;
+  font-variation-settings: 'opsz' 96, 'SOFT' 50;
+  display: block;
+}
+.metric .num em { font-style: italic; color: var(--accent); }
+.metric .lab {
+  font-family: var(--mono);
+  font-size: 10.5px; text-transform: uppercase;
+  letter-spacing: 0.12em; color: var(--ink-dim);
+  margin-top: 12px; display: block;
+}
+
+/* SECTIONS */
+.section {
+  padding: clamp(80px, 12vw, 160px) 0;
+  border-top: 1px solid var(--line-soft);
+}
+.section-header {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-bottom: 64px;
+}
+@media (min-width: 900px) {
+  .section-header { grid-template-columns: 5fr 7fr; gap: 80px; align-items: end; }
+}
+.section-header .meta { display: flex; flex-direction: column; gap: 14px; }
+
+/* ============================================================
+   PILLAR CARDS — used in §01 (the four pillars)
+   ============================================================ */
+.platforms {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+@media (min-width: 720px) { .platforms { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1000px) { .platforms { grid-template-columns: repeat(4, 1fr); } }
+
+.platform {
+  background: var(--bg);
+  padding: 36px 32px 40px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 240px;
+  transition: background 0.3s;
+}
+.platform:hover { background: var(--bg-warm); }
+.platform-tag {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.platform h3 {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 380;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 32;
+}
+.platform p {
+  color: var(--ink-mute);
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+.platform-stack {
+  margin-top: auto;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ink-dim);
+  padding-top: 16px;
+  border-top: 1px dashed var(--line);
+}
+
+/* ============================================================
+   DIAGRAM FRAMES (architecture, schema, flow)
+   ============================================================ */
+.diagram-frame {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  padding: clamp(24px, 4vw, 56px);
+  position: relative;
+  overflow: hidden;
+}
+.diagram-frame::before {
+  position: absolute;
+  top: 16px; right: 20px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  content: var(--fig-label, '');
+}
+.diagram-frame.fig-arch::before { content: 'fig.01 — system architecture'; }
+.diagram-frame.fig-schema::before { content: 'fig.02 — data model'; }
+.diagram-frame.fig-flow::before { content: 'fig.03 — outbound automation'; }
+
+@media (max-width: 700px) {
+  .diagram-frame { padding: 36px 0 24px; margin: 0 calc(var(--gutter) * -1); }
+  .diagram-frame::before { left: var(--gutter); right: auto; top: 12px; }
+  .diagram-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 var(--gutter);
+  }
+  .diagram-scroll svg { min-width: 760px; }
+  .diagram-scroll-hint {
+    display: block;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    padding: 12px var(--gutter) 0;
+    border-top: 1px dashed var(--line);
+    margin-top: 12px;
+  }
+  .diagram-scroll-hint::before { content: '← '; color: var(--accent); }
+  .diagram-scroll-hint::after { content: ' →'; color: var(--accent); }
+}
+.diagram-scroll-hint { display: none; }
+.diagram-frame svg { width: 100%; height: auto; display: block; }
+
+/* schematic styles inside SVGs */
+.sch-line { stroke: var(--line); stroke-width: 1; fill: none; }
+.sch-arrow { stroke: var(--ink-dim); stroke-width: 1.2; fill: none; }
+.sch-flow { stroke: var(--accent); stroke-width: 1.5; fill: none; }
+.sch-box { fill: var(--bg); stroke: var(--ink-dim); stroke-width: 1; }
+.sch-box-accent { fill: var(--bg); stroke: var(--accent); stroke-width: 1.4; }
+.sch-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--ink); letter-spacing: 0.04em; }
+.sch-label-sm { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; fill: var(--ink-dim); letter-spacing: 0.06em; text-transform: uppercase; }
+.sch-title { font-family: 'Fraunces', serif; font-size: 16px; font-style: italic; fill: var(--ink); }
+
+/* ============================================================
+   SCHEMA TABLES
+   ============================================================ */
+.schema-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+@media (min-width: 900px) { .schema-grid { grid-template-columns: repeat(2, 1fr); gap: 28px; } }
+@media (min-width: 1100px) { .schema-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.schema-card {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  padding: 24px 24px 20px;
+  position: relative;
+}
+.schema-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--ink-dim);
+}
+.schema-card.is-accent::before { background: var(--accent); }
+.schema-card .table-name {
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  letter-spacing: 0.02em;
+  margin-bottom: 4px;
+  display: block;
+}
+.schema-card .table-role {
+  font-family: var(--mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 18px;
+}
+.schema-card ul {
+  list-style: none;
+  padding: 0; margin: 0;
+}
+.schema-card li {
+  font-family: var(--mono);
+  font-size: 11.5px;
+  color: var(--ink-mute);
+  padding: 4px 0;
+  line-height: 1.5;
+  letter-spacing: 0;
+}
+.schema-card li .col {
+  color: var(--ink);
+  display: inline-block;
+  min-width: 120px;
+}
+.schema-card li .ty {
+  color: var(--ink-dim);
+  font-size: 10.5px;
+}
+.schema-card li .pk { color: var(--accent); font-size: 10px; margin-left: 6px; }
+.schema-card li .fk { color: var(--accent-2); font-size: 10px; margin-left: 6px; }
+
+/* ============================================================
+   FLOW STAGES (replaces Georgia's "timeline" pattern for Blitz)
+   ============================================================ */
+.stages {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+.stage {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 24px;
+  border-top: 1px solid var(--line-soft);
+  padding: 32px 0;
+  align-items: start;
+}
+.stage:last-child { border-bottom: 1px solid var(--line-soft); }
+.stage-num {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 32px;
+  color: var(--accent);
+  line-height: 1;
+  font-weight: 320;
+  font-variation-settings: 'opsz' 36;
+}
+.stage-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+@media (min-width: 800px) {
+  .stage-content { grid-template-columns: 5fr 4fr 3fr; gap: 32px; align-items: start; }
+}
+.stage-title {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 380;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  font-variation-settings: 'opsz' 24;
+}
+.stage-title .when {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-style: normal;
+  margin-bottom: 6px;
+}
+.stage-desc {
+  color: var(--ink-mute);
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+.stage-tech {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-dim);
+  line-height: 1.7;
+}
+.stage-tech .tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid var(--line);
+  margin: 0 4px 4px 0;
+  border-radius: 2px;
+  background: var(--bg-panel);
+  white-space: nowrap;
+  font-size: 10.5px;
+}
+
+/* ============================================================
+   TWO-UP CARDS (used in §05 LLM section)
+   ============================================================ */
+.ai-layers {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+@media (min-width: 900px) {
+  .ai-layers { grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); }
+}
+.ai-card {
+  background: var(--bg);
+  padding: 40px 36px 44px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.ai-card .layer-num {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.ai-card h3 {
+  font-family: var(--serif);
+  font-size: 30px;
+  font-weight: 380;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.ai-card .model-line {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-dim);
+  border-top: 1px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
+  padding: 14px 0;
+  letter-spacing: 0.02em;
+}
+.ai-card .model-line strong { color: var(--ink); font-weight: 500; }
+.ai-card p { color: var(--ink-mute); font-size: 14.5px; line-height: 1.6; }
+
+/* ============================================================
+   STACK GRID
+   ============================================================ */
+.stack-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+@media (min-width: 720px) { .stack-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.stack-cell {
+  background: var(--bg);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 130px;
+}
+.stack-cell .name {
+  font-family: var(--serif);
+  font-size: 21px;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  font-variation-settings: 'opsz' 24;
+}
+.stack-cell .role {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+}
+.stack-cell .why {
+  color: var(--ink-mute);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: auto;
+}
+
+/* ============================================================
+   FINGERPRINTS
+   ============================================================ */
+.fingerprints {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+@media (min-width: 900px) { .fingerprints { grid-template-columns: 1fr 1fr; gap: 0 80px; } }
+.fp {
+  border-top: 1px solid var(--line-soft);
+  padding: 36px 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 28px;
+  align-items: start;
+}
+.fp:last-child { border-bottom: 1px solid var(--line-soft); }
+.fp-num {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 32px;
+  font-weight: 320;
+  color: var(--accent);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  width: 56px;
+  font-variation-settings: 'opsz' 36;
+}
+.fp h4 {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+.fp p { color: var(--ink-mute); font-size: 14.5px; line-height: 1.6; }
+.fp p code, .fp p .mono-inline {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  background: var(--bg-panel);
+  padding: 1px 6px;
+  border: 1px solid var(--line);
+  border-radius: 2px;
+  color: var(--ink);
+}
+
+/* ============================================================
+   CALLOUT
+   ============================================================ */
+.callout {
+  background: var(--bg-warm);
+  border-left: 2px solid var(--accent);
+  padding: 24px 28px;
+  margin: 32px 0;
+}
+.callout-title {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 10px;
+}
+.callout p { color: var(--ink-mute); font-size: 14.5px; line-height: 1.55; }
+.callout p strong { color: var(--ink); }
+
+/* ============================================================
+   NEXT-PROJECT LINK
+   ============================================================ */
+.next-project {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin-top: 48px;
+}
+.next-link {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "eyebrow arrow"
+    "title arrow"
+    "meta arrow";
+  gap: 4px 32px;
+  padding: 36px 8px;
+  text-decoration: none;
+  color: var(--ink);
+  transition: padding 0.4s cubic-bezier(.2,.65,.25,1);
+}
+.next-link:hover { padding-left: 24px; padding-right: 24px; }
+.next-eyebrow {
+  grid-area: eyebrow;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.next-title {
+  grid-area: title;
+  font-family: var(--serif);
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 320;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-variation-settings: 'opsz' 64;
+}
+.next-title em { font-style: italic; color: var(--accent); }
+.next-meta {
+  grid-area: meta;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-dim);
+  margin-top: 8px;
+  letter-spacing: 0.02em;
+}
+.next-arrow {
+  grid-area: arrow;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 56px;
+  font-weight: 280;
+  color: var(--ink-mute);
+  align-self: center;
+  transition: transform 0.4s cubic-bezier(.2,.65,.25,1), color 0.3s;
+}
+.next-link:hover .next-arrow { transform: translateX(12px); color: var(--accent); }
+
+.outro {
+  padding: clamp(100px, 16vw, 200px) 0 clamp(80px, 10vw, 140px);
+  border-top: 1px solid var(--line-soft);
+}
+.outro h2 {
+  font-family: var(--serif);
+  font-weight: 280;
+  font-size: clamp(48px, 8vw, 110px);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  font-variation-settings: 'opsz' 144, 'SOFT' 30;
+  margin-bottom: 40px;
+  max-width: 16ch;
+}
+.outro h2 em { color: var(--accent); font-style: italic; }
+
+footer {
+  padding: 32px 0;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-dim);
+  display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between;
+}
+
+/* SCROLL REVEAL */
+body.js-ready .reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.9s cubic-bezier(.2,.65,.25,1), transform 0.9s cubic-bezier(.2,.65,.25,1);
+}
+body.js-ready .reveal.in { opacity: 1; transform: none; }
+body.js-ready .reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.7s cubic-bezier(.2,.65,.25,1), transform 0.7s cubic-bezier(.2,.65,.25,1);
+}
+body.js-ready .reveal-stagger.in > * { opacity: 1; transform: none; }
+body.js-ready .reveal-stagger.in > *:nth-child(1) { transition-delay: 0.05s; }
+body.js-ready .reveal-stagger.in > *:nth-child(2) { transition-delay: 0.12s; }
+body.js-ready .reveal-stagger.in > *:nth-child(3) { transition-delay: 0.19s; }
+body.js-ready .reveal-stagger.in > *:nth-child(4) { transition-delay: 0.26s; }
+body.js-ready .reveal-stagger.in > *:nth-child(5) { transition-delay: 0.33s; }
+body.js-ready .reveal-stagger.in > *:nth-child(6) { transition-delay: 0.40s; }
+body.js-ready .reveal-stagger.in > *:nth-child(7) { transition-delay: 0.47s; }
+body.js-ready .reveal-stagger.in > *:nth-child(8) { transition-delay: 0.54s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-stagger > * { opacity: 1 !important; transform: none !important; transition: none !important; }
+  body::before { display: none; }
+  .nav-logo .dot { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a href="index.html" class="nav-logo"><span class="dot"></span>JACOB OLIKER</a>
+    <div class="nav-links">
+      <a href="index.html">Index</a>
+      <a href="georgia.html">Georgia</a>
+      <a href="blitz.html" class="is-active">Blitz</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-tag eyebrow">Case Study · Blitz · 2026</div>
+        <h1 class="display reveal">
+          Athletes set<br>
+          the terms.<br>
+          The system<br>
+          <em>runs the</em><br>
+          <em>outreach.</em>
+        </h1>
+        <dl class="hero-meta reveal" style="margin-top: 56px;">
+          <div><dt>Built by</dt><dd>Jacob Oliker · solo</dd></div>
+          <div><dt>Status</dt><dd><em>● MVP — shipped on Vercel</em></dd></div>
+          <div><dt>Stack</dt><dd>Next.js 16 · Supabase · n8n · Anthropic · Resend · Mapbox</dd></div>
+          <div><dt>Repo</dt><dd><a href="https://github.com/joliker-arch/getblitz" target="_blank" rel="noopener">github.com/joliker-arch/getblitz</a></dd></div>
+        </dl>
+      </div>
+      <aside class="hero-side reveal">
+        Blitz inverts the NIL marketplace. Most platforms wait for brands to come find athletes. Blitz flips it — athletes set deliverables and pricing, and the platform runs personalized outbound to local and national businesses on their behalf.
+        <span class="by">An exercise in athlete-side prospecting</span>
+      </aside>
+    </div>
+
+    <div class="metric-strip reveal-stagger">
+      <div class="metric"><span class="num">7</span><span class="lab">Postgres tables · RLS-isolated per athlete</span></div>
+      <div class="metric"><span class="num"><em>4</em></span><span class="lab">Stages in the outbound automation</span></div>
+      <div class="metric"><span class="num">1</span><span class="lab">Builder · solo MVP</span></div>
+      <div class="metric"><span class="num">∞</span><span class="lab">Athletes the system can run in parallel</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== §01 PILLARS ===== -->
+<section class="section" id="pillars">
+  <div class="wrap">
+    <header class="section-header">
+      <div class="meta">
+        <div class="eyebrow">§01 · The system</div>
+        <h2 class="h-section">Four pillars, <em>one</em> shared database.</h2>
+      </div>
+      <p class="lede reveal">
+        Blitz splits cleanly across a Next.js application that athletes log into, a Postgres database in Supabase that every part of the system reads and mutates, an n8n automation layer that runs the outbound work in the background, and a stack of integrations that handle email, search, and AI.
+      </p>
+    </header>
+
+    <div class="platforms reveal-stagger">
+      <div class="platform">
+        <span class="platform-tag">§ 01·a — Application</span>
+        <h3>Next.js 16</h3>
+        <p>Athlete onboarding, dashboards, deal pipeline, and a unified inbox for replies. App Router, React 19, server components, middleware-enforced auth. Deployed on Vercel.</p>
+        <div class="platform-stack">App Router · React 19 · Tailwind v4 · Supabase SSR</div>
+      </div>
+      <div class="platform">
+        <span class="platform-tag">§ 01·b — Data</span>
+        <h3>Supabase</h3>
+        <p>Postgres + Auth + Storage. Seven tables hold the entire system state: athletes, their deliverables and preferences, target companies, contacts, campaigns, and deals. Row-level security isolates every athlete's data.</p>
+        <div class="platform-stack">Postgres · RLS · Auth · Storage · MCP server</div>
+      </div>
+      <div class="platform">
+        <span class="platform-tag">§ 01·c — Automation</span>
+        <h3>n8n</h3>
+        <p>Runs the outbound work asynchronously: company discovery, contact scraping, personalization, send. Connects to the same Supabase database the app reads from. Trigger model is per-athlete — when an athlete activates outreach, n8n picks them up.</p>
+        <div class="platform-stack">Webhook + scheduled · idempotent · same DB</div>
+      </div>
+      <div class="platform">
+        <span class="platform-tag">§ 01·d — Outbound stack</span>
+        <h3>Integrations</h3>
+        <p>Resend for transactional and outbound email with proper deliverability. Anthropic Claude for the personalization step. Mapbox for visualizing target companies geographically. Google APIs for inbox sync.</p>
+        <div class="platform-stack">Resend · Claude · Mapbox · Google APIs</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== §02 ARCHITECTURE DIAGRAM ===== -->
+<section class="section" id="architecture">
+  <div class="wrap">
+    <header class="section-header">
+      <div class="meta">
+        <div class="eyebrow">§02 · Architecture</div>
+        <h2 class="h-section">One athlete, <em>one</em> autonomous campaign.</h2>
+      </div>
+      <p class="lede reveal">
+        From the moment an athlete finishes onboarding to the moment a brand replies and the conversation hands back to the human. Two parallel halves of the system — the application the athlete sees, and the automation that runs in the background — meeting in the middle at a single Postgres database.
+      </p>
+    </header>
+
+    <div class="diagram-frame fig-arch reveal">
+      <div class="diagram-scroll">
+      <svg viewBox="0 0 1200 700" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Blitz system architecture">
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1F2025" stroke-width="0.5"/>
+          </pattern>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#75726A"/>
+          </marker>
+          <marker id="arrow-flow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#C8553D"/>
+          </marker>
+        </defs>
+        <rect width="1200" height="700" fill="url(#grid)" opacity="0.4"/>
+
+        <!-- Top column headers -->
+        <text x="160" y="42" class="sch-label-sm" text-anchor="middle">ATHLETE-FACING</text>
+        <text x="600" y="42" class="sch-label-sm" text-anchor="middle">SHARED STATE</text>
+        <text x="1040" y="42" class="sch-label-sm" text-anchor="middle">AUTOMATION-FACING</text>
+
+        <line x1="320" y1="55" x2="320" y2="660" class="sch-line" stroke-dasharray="2 4"/>
+        <line x1="880" y1="55" x2="880" y2="660" class="sch-line" stroke-dasharray="2 4"/>
+
+        <!-- ====== LEFT — Athlete-facing app ====== -->
+        <rect x="40" y="80" width="240" height="56" class="sch-box-accent" rx="2"/>
+        <text x="160" y="106" class="sch-title" text-anchor="middle">Athlete</text>
+        <text x="160" y="124" class="sch-label-sm" text-anchor="middle">SIGNS UP · ONBOARDS</text>
+
+        <!-- Onboarding flow box -->
+        <rect x="40" y="166" width="240" height="100" class="sch-box" rx="2"/>
+        <text x="160" y="192" class="sch-title" text-anchor="middle">/onboarding</text>
+        <text x="160" y="210" class="sch-label-sm" text-anchor="middle">PERSONAL · SOCIAL</text>
+        <text x="160" y="226" class="sch-label-sm" text-anchor="middle">DELIVERABLES · PRICING</text>
+        <text x="160" y="246" class="sch-label-sm" text-anchor="middle" fill="#C8553D">[ multi-step ]</text>
+
+        <!-- Dashboard -->
+        <rect x="40" y="296" width="240" height="56" class="sch-box-accent" rx="2"/>
+        <text x="160" y="322" class="sch-title" text-anchor="middle">/dashboard</text>
+        <text x="160" y="340" class="sch-label-sm" text-anchor="middle">METRICS · ACTIVE DEALS</text>
+
+        <!-- Inbox -->
+        <rect x="40" y="382" width="240" height="56" class="sch-box" rx="2"/>
+        <text x="160" y="408" class="sch-title" text-anchor="middle">/inbox</text>
+        <text x="160" y="426" class="sch-label-sm" text-anchor="middle">REPLIES · HAND-OFF</text>
+
+        <!-- Deals -->
+        <rect x="40" y="468" width="240" height="56" class="sch-box" rx="2"/>
+        <text x="160" y="494" class="sch-title" text-anchor="middle">/deals</text>
+        <text x="160" y="512" class="sch-label-sm" text-anchor="middle">PIPELINE · PAYMENT</text>
+
+        <!-- Brands -->
+        <rect x="40" y="554" width="240" height="56" class="sch-box" rx="2"/>
+        <text x="160" y="580" class="sch-title" text-anchor="middle">/brands</text>
+        <text x="160" y="598" class="sch-label-sm" text-anchor="middle">TARGET COMPANIES</text>
+
+        <!-- Auth/middleware -->
+        <text x="160" y="638" class="sch-label-sm" text-anchor="middle" fill="#C8553D">[ supabase ssr · cookie session ]</text>
+
+        <!-- Arrows from app pages to DB -->
+        <path d="M 280 220 L 410 290" class="sch-flow" marker-end="url(#arrow-flow)"/>
+        <path d="M 280 324 L 410 320" class="sch-flow" marker-end="url(#arrow-flow)"/>
+        <path d="M 280 410 L 410 360" class="sch-flow" marker-end="url(#arrow-flow)"/>
+        <path d="M 280 496 L 410 380" class="sch-flow" marker-end="url(#arrow-flow)"/>
+        <path d="M 280 582 L 410 410" class="sch-flow" marker-end="url(#arrow-flow)"/>
+
+        <!-- ====== CENTER — Supabase ====== -->
+        <rect x="410" y="180" width="380" height="280" class="sch-box-accent" rx="3" stroke-width="1.6"/>
+        <text x="600" y="208" class="sch-title" text-anchor="middle" font-size="20">Supabase Postgres</text>
+        <text x="600" y="226" class="sch-label-sm" text-anchor="middle">7 TABLES · ROW-LEVEL SECURITY</text>
+
+        <!-- Inner table list -->
+        <rect x="430" y="248" width="160" height="22" class="sch-box" rx="1"/>
+        <text x="510" y="263" class="sch-label" text-anchor="middle" font-size="10">athletes</text>
+        <rect x="610" y="248" width="160" height="22" class="sch-box" rx="1"/>
+        <text x="690" y="263" class="sch-label" text-anchor="middle" font-size="10">deliverables</text>
+
+        <rect x="430" y="278" width="160" height="22" class="sch-box" rx="1"/>
+        <text x="510" y="293" class="sch-label" text-anchor="middle" font-size="10">athlete_preferences</text>
+        <rect x="610" y="278" width="160" height="22" class="sch-box" rx="1"/>
+        <text x="690" y="293" class="sch-label" text-anchor="middle" font-size="10">target_companies</text>
+
+        <rect x="430" y="308" width="160" height="22" class="sch-box" rx="1"/>
+        <text x="510" y="323" class="sch-label" text-anchor="middle" font-size="10">company_contacts</text>
+        <rect x="610" y="308" width="160" height="22" class="sch-box" rx="1"/>
+        <text x="690" y="323" class="sch-label" text-anchor="middle" font-size="10">outreach_campaigns</text>
+
+        <rect x="510" y="338" width="180" height="22" class="sch-box" rx="1"/>
+        <text x="600" y="353" class="sch-label" text-anchor="middle" font-size="10">deals</text>
+
+        <text x="600" y="395" class="sch-label-sm" text-anchor="middle">RLS · athletes only see their own data</text>
+        <text x="600" y="415" class="sch-label-sm" text-anchor="middle">SUPABASE STORAGE · headshots · media kits</text>
+        <text x="600" y="435" class="sch-label-sm" text-anchor="middle" fill="#C8553D">[ single source of truth ]</text>
+
+        <!-- ====== RIGHT — Automation ====== -->
+        <rect x="920" y="80" width="240" height="56" class="sch-box-accent" rx="2"/>
+        <text x="1040" y="106" class="sch-title" text-anchor="middle">n8n trigger</text>
+        <text x="1040" y="124" class="sch-label-sm" text-anchor="middle">ATHLETE ACTIVATES</text>
+
+        <rect x="920" y="166" width="240" height="60" class="sch-box" rx="2"/>
+        <text x="1040" y="192" class="sch-title" text-anchor="middle">Discover</text>
+        <text x="1040" y="210" class="sch-label-sm" text-anchor="middle">COMPANY SOURCING</text>
+
+        <rect x="920" y="246" width="240" height="60" class="sch-box" rx="2"/>
+        <text x="1040" y="272" class="sch-title" text-anchor="middle">Scrape contacts</text>
+        <text x="1040" y="290" class="sch-label-sm" text-anchor="middle">DECISION-MAKER LOOKUP</text>
+
+        <rect x="920" y="326" width="240" height="60" class="sch-box-accent" rx="2"/>
+        <text x="1040" y="352" class="sch-title" text-anchor="middle">Personalize</text>
+        <text x="1040" y="370" class="sch-label-sm" text-anchor="middle">CLAUDE · ATHLETE-SPECIFIC PITCH</text>
+
+        <rect x="920" y="406" width="240" height="60" class="sch-box" rx="2"/>
+        <text x="1040" y="432" class="sch-title" text-anchor="middle">Send</text>
+        <text x="1040" y="450" class="sch-label-sm" text-anchor="middle">RESEND · TRACKED</text>
+
+        <rect x="920" y="486" width="240" height="60" class="sch-box" rx="2"/>
+        <text x="1040" y="512" class="sch-title" text-anchor="middle">Inbox sync</text>
+        <text x="1040" y="530" class="sch-label-sm" text-anchor="middle">REPLY DETECTION</text>
+
+        <text x="1040" y="568" class="sch-label-sm" text-anchor="middle" fill="#C8553D">[ writes back to DB ]</text>
+
+        <!-- Arrows from automation back to DB -->
+        <path d="M 920 196 L 790 290" class="sch-arrow" marker-end="url(#arrow)"/>
+        <path d="M 920 276 L 790 310" class="sch-arrow" marker-end="url(#arrow)"/>
+        <path d="M 920 356 L 790 340" class="sch-arrow" marker-end="url(#arrow)"/>
+        <path d="M 920 436 L 790 360" class="sch-arrow" marker-end="url(#arrow)"/>
+        <path d="M 920 516 L 790 390" class="sch-arrow" marker-end="url(#arrow)"/>
+
+        <!-- Hand-off arrow: positive reply → /inbox in app -->
+        <path d="M 920 516 Q 600 640, 280 410" class="sch-flow" marker-end="url(#arrow-flow)" stroke-dasharray="3 4" opacity="0.7"/>
+        <text x="600" y="660" class="sch-label-sm" text-anchor="middle" fill="#C8553D">positive reply → notify athlete · hand-off</text>
+      </svg>
+      </div>
+      <span class="diagram-scroll-hint">scroll to pan</span>
+    </div>
+
+    <p class="mono reveal" style="margin-top: 24px; max-width: 80ch; line-height: 1.7;">
+      The shared database is the integration. The Next.js app and the n8n workflows never call each other directly — they both read and mutate Postgres. Athletes can edit their preferences mid-campaign and the next run picks up the change. n8n can write a new contact and the athlete sees it in /brands a moment later. Decoupling falls out for free.
+    </p>
+  </div>
+</section>
+
+<!-- ===== §03 DATA MODEL ===== -->
+<section class="section" id="schema">
+  <div class="wrap">
+    <header class="section-header">
+      <div class="meta">
+        <div class="eyebrow">§03 · Data model</div>
+        <h2 class="h-section">Seven tables. <em>Every</em> piece of state.</h2>
+      </div>
+      <p class="lede reveal">
+        The database is the spine of the whole system. Every page in the app queries it, every n8n step reads or writes to it, every deal moves through it. RLS policies at the row level mean each athlete only ever sees their own data — not enforced by application code, but by the database itself.
+      </p>
+    </header>
+
+    <div class="schema-grid reveal-stagger">
+      <div class="schema-card is-accent">
+        <span class="table-name">athletes</span>
+        <span class="table-role">core · 1 row per user</span>
+        <ul>
+          <li><span class="col">id</span><span class="ty">uuid</span><span class="pk">PK</span></li>
+          <li><span class="col">user_id</span><span class="ty">uuid</span><span class="fk">FK auth.users</span></li>
+          <li><span class="col">first_name · last_name</span></li>
+          <li><span class="col">school · sport · year</span></li>
+          <li><span class="col">socials</span><span class="ty">jsonb</span></li>
+          <li><span class="col">headshot_url</span></li>
+          <li><span class="col">media_kit_url</span></li>
+          <li><span class="col">onboarding_completed</span><span class="ty">bool</span></li>
+        </ul>
+      </div>
+
+      <div class="schema-card">
+        <span class="table-name">deliverables</span>
+        <span class="table-role">athlete offerings</span>
+        <ul>
+          <li><span class="col">id</span><span class="ty">uuid</span><span class="pk">PK</span></li>
+          <li><span class="col">athlete_id</span><span class="ty">uuid</span><span class="fk">FK</span></li>
+          <li><span class="col">type</span><span class="ty">enum</span></li>
+          <li><span class="col">platform</span></li>
+          <li><span class="col">price_cents</span><span class="ty">int</span></li>
+          <li><span class="col">turnaround_days</span></li>
+          <li><span class="col">description</span></li>
+          <li><span class="col">is_active</span><span class="ty">bool</span></li>
+        </ul>
+      </div>
+
+      <div class="schema-card">
+        <span class="table-name">athlete_preferences</span>
+        <span class="table-role">targeting filters</span>
+        <ul>
+          <li><span class="col">athlete_id</span><span class="ty">uuid</span><span class="pk">PK</span></li>
+          <li><span class="col">target_industries</span><span class="ty">text[]</span></li>
+          <li><span class="col">geo_radius_miles</span></li>
+          <li><span class="col">geo_center</span><span class="ty">geog</span></li>
+          <li><span class="col">company_size_range</span></li>
+          <li><span class="col">excluded_brands</span><span class="ty">text[]</span></li>
+          <li><span class="col">tone</span><span class="ty">enum</span></li>
+        </ul>
+      </div>
+
+      <div class="schema-card is-accent">
+        <span class="table-name">target_companies</span>
+        <span class="table-role">discovered prospects</span>
+        <ul>
+          <li><span class="col">id</span><span class="ty">uuid</span><span class="pk">PK</span></li>
+          <li><span class="col">athlete_id</span><span class="ty">uuid</span><span class="fk">FK</span></li>
+          <li><span class="col">name</span></li>
+          <li><span class="col">domain · website</span></li>
+          <li><span class="col">industry</span></li>
+          <li><span class="col">location</span><span class="ty">geog</span></li>
+          <li><span class="col">size_range</span></li>
+          <li><span class="col">discovery_source</span></li>
+          <li><span class="col">match_score</span><span class="ty">numeric</span></li>
+        </ul>
+      </div>
+
+      <div class="schema-card">
+        <span class="table-name">company_contacts</span>
+        <span class="table-role">decision makers</span>
+        <ul>
+          <li><span class="col">id</span><span class="ty">uuid</span><span class="pk">PK</span></li>
+          <li><span class="col">company_id</span><span class="ty">uuid</span><span class="fk">FK</span></li>
+          <li><span class="col">first_name · last_name</span></li>
+          <li><span class="col">title</span></li>
+          <li><span class="col">email · linkedin_url</span></li>
+          <li><span class="col">verified</span><span class="ty">bool</span></li>
+          <li><span class="col">scrape_source</span></li>
+        </ul>
+      </div>
+
+      <div class="schema-card is-accent">
+        <span class="table-name">outreach_campaigns</span>
+        <span class="table-role">sent messages · replies</span>
+        <ul>
+          <li><span class="col">id</span><span class="ty">uuid</span><span class="pk">PK</span></li>
+          <li><span class="col">athlete_id · contact_id</span><span class="fk">FK</span></li>
+          <li><span class="col">subject · body</span></li>
+          <li><span class="col">sent_at</span><span class="ty">timestamptz</span></li>
+          <li><span class="col">status</span><span class="ty">enum</span></li>
+          <li><span class="col">opened_at · replied_at</span></li>
+          <li><span class="col">resend_message_id</span></li>
+          <li><span class="col">personalization</span><span class="ty">jsonb</span></li>
+        </ul>
+      </div>
+
+      <div class="schema-card">
+        <span class="table-name">deals</span>
+        <span class="table-role">won opportunities</span>
+        <ul>
+          <li><span class="col">id</span><span class="ty">uuid</span><span class="pk">PK</span></li>
+          <li><span class="col">athlete_id · campaign_id</span><span class="fk">FK</span></li>
+          <li><span class="col">brand_name</span></li>
+          <li><span class="col">deliverable_ids</span><span class="ty">uuid[]</span></li>
+          <li><span class="col">total_value_cents</span></li>
+          <li><span class="col">commission_cents</span></li>
+          <li><span class="col">status</span><span class="ty">enum</span></li>
+          <li><span class="col">closed_at</span></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="callout reveal" style="margin-top: 56px;">
+      <div class="callout-title">How to read this</div>
+      <p>The fields shown are reconstructed from <strong>PROJECT.md</strong> and the application's middleware-protected route surface, not the live migration files. Field names follow the conventions visible in the codebase. Treat this as the architectural shape — the deployed schema may have drifted in details.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== §04 OUTBOUND PIPELINE ===== -->
+<section class="section" id="pipeline">
+  <div class="wrap">
+    <header class="section-header">
+      <div class="meta">
+        <div class="eyebrow">§04 · The pipeline</div>
+        <h2 class="h-section">Discover. Scrape. <em>Personalize.</em> Send.</h2>
+      </div>
+      <p class="lede reveal">
+        Four asynchronous stages, each one writing back to the same Postgres database. n8n runs the whole sequence per-athlete, idempotent, with each stage operating on whatever rows are due for it. New athletes get their first run within minutes of activating. Existing athletes get re-evaluated on a schedule.
+      </p>
+    </header>
+
+    <div class="stages reveal-stagger">
+      <div class="stage">
+        <div class="stage-num">i.</div>
+        <div class="stage-content">
+          <div class="stage-title"><span class="when">Stage 1 · DISCOVER</span>Company sourcing</div>
+          <div class="stage-desc">Pulls the athlete's targeting preferences (industries, geo radius, size range, excluded brands) and surfaces matching companies. Each match writes a row into target_companies with a discovery source and a match score the system can rank by.</div>
+          <div class="stage-tech">
+            <span class="tag">athlete_preferences</span>
+            <span class="tag">→ target_companies</span>
+            <span class="tag">match_score</span>
+          </div>
+        </div>
+      </div>
+      <div class="stage">
+        <div class="stage-num">ii.</div>
+        <div class="stage-content">
+          <div class="stage-title"><span class="when">Stage 2 · SCRAPE</span>Decision-maker lookup</div>
+          <div class="stage-desc">For each target company, find the right person to email — typically a marketing or partnerships lead, sometimes the founder for smaller brands. Verifies emails before they enter the campaign queue. Skips contacts that already exist for the same athlete.</div>
+          <div class="stage-tech">
+            <span class="tag">target_companies</span>
+            <span class="tag">→ company_contacts</span>
+            <span class="tag">verified · email</span>
+          </div>
+        </div>
+      </div>
+      <div class="stage">
+        <div class="stage-num">iii.</div>
+        <div class="stage-content">
+          <div class="stage-title"><span class="when">Stage 3 · PERSONALIZE</span>Per-prospect pitch generation</div>
+          <div class="stage-desc">Hands the contact + the athlete's deliverables, sport, school, and tone preference to Anthropic Claude. Returns a subject line and a 60–90 word body that reads like the athlete wrote it themselves — never a template. The personalization payload gets stored on the campaign row so it can be audited or A/B tested later.</div>
+          <div class="stage-tech">
+            <span class="tag">@anthropic-ai/sdk</span>
+            <span class="tag">athletes + contacts</span>
+            <span class="tag">→ outreach_campaigns</span>
+          </div>
+        </div>
+      </div>
+      <div class="stage">
+        <div class="stage-num">iv.</div>
+        <div class="stage-content">
+          <div class="stage-title"><span class="when">Stage 4 · SEND</span>Tracked outbound + reply detection</div>
+          <div class="stage-desc">Resend handles the actual email send, with bounce + open + click tracking. The Resend message ID gets stored on the campaign row for later correlation. A separate inbox sync flow watches for replies and routes positive ones into the athlete's /inbox; negative or unsubscribe responses suppress the contact from future runs.</div>
+          <div class="stage-tech">
+            <span class="tag">resend</span>
+            <span class="tag">resend_message_id</span>
+            <span class="tag">→ /inbox · hand-off</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== §05 LLM ROLE ===== -->
+<section class="section" id="ai">
+  <div class="wrap">
+    <header class="section-header">
+      <div class="meta">
+        <div class="eyebrow">§05 · LLM role</div>
+        <h2 class="h-section">One model. <em>One</em> job.</h2>
+      </div>
+      <p class="lede reveal">
+        Claude does exactly one thing in Blitz: write a single email per prospect that doesn't sound like a template. That's it. The rest of the system is deterministic Postgres queries and n8n flows. Keeping the AI surface narrow is the point — fewer places for an LLM mistake to break the system, more concentrated impact where it matters.
+      </p>
+    </header>
+
+    <div class="ai-layers reveal-stagger">
+      <div class="ai-card">
+        <span class="layer-num">Layer 01 · The personalization step</span>
+        <h3>Anthropic Claude</h3>
+        <div class="model-line"><strong>@anthropic-ai/sdk</strong> · structured prompt · ≈ 200 tokens</div>
+        <p>The prompt fuses the athlete's profile (school, sport, year, deliverables) with the prospect's profile (company, industry, role) and asks for a subject line + body in the athlete's voice. Strict rules: no hype words, no &ldquo;I'm reaching out because&rdquo;, no fake compliments. Output drops directly into the campaign row.</p>
+        <p>The personalization payload — what the model saw and what it returned — gets stored on the campaign row so the system can attribute reply rates to specific prompt variants later.</p>
+      </div>
+
+      <div class="ai-card">
+        <span class="layer-num">Layer 02 · Why not more</span>
+        <h3>Deterministic everywhere else</h3>
+        <div class="model-line"><strong>Postgres + filters</strong> · no LLM in the discovery loop</div>
+        <p>Discovery and scraping are deliberately rule-based. Match scores come from comparing the athlete's preferences against the company's metadata — distance, industry overlap, exclusion list. No semantic match, no embedding similarity. That's a future feature; for the MVP, deterministic targeting is more debuggable, cheaper to run, and lets the personalization step be the moment the AI earns its keep.</p>
+        <p>If the personalization fails, the row is skipped and surfaced in the admin panel for manual review. The campaign never sends template-y junk.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== §06 STACK ===== -->
+<section class="section" id="stack">
+  <div class="wrap">
+    <header class="section-header">
+      <div class="meta">
+        <div class="eyebrow">§06 · The stack</div>
+        <h2 class="h-section">Modern defaults, <em>where</em> they earn it.</h2>
+      </div>
+      <p class="lede reveal">
+        Twelve dependencies that actually do something. The picks were calibrated for a solo build — minimum infrastructure, maximum leverage from managed services, and an automation layer that doesn't require running a server.
+      </p>
+    </header>
+
+    <div class="stack-grid reveal-stagger">
+      <div class="stack-cell"><span class="role">Frontend</span><span class="name">Next.js 16</span><span class="why">App Router, React 19, server components. Bleeding edge but the upgrades have been worth it for the streaming + cookie-aware patterns.</span></div>
+      <div class="stack-cell"><span class="role">Auth + DB</span><span class="name">Supabase</span><span class="why">Postgres, Auth, Storage, and Row-Level Security in one product. The MCP server is a nice bonus for local development with Claude.</span></div>
+      <div class="stack-cell"><span class="role">Styling</span><span class="name">Tailwind v4</span><span class="why">No design system to invent. Configuration-as-CSS in v4 is dramatically faster than the JS-config era.</span></div>
+      <div class="stack-cell"><span class="role">Deploy</span><span class="name">Vercel</span><span class="why">Zero-config deploy from the same repo. Preview branches let me ship UI changes safely.</span></div>
+      <div class="stack-cell"><span class="role">Automation</span><span class="name">n8n</span><span class="why">Visual workflow builder that connects to the same database the app reads from. No backend code to maintain for the discovery and outreach flows.</span></div>
+      <div class="stack-cell"><span class="role">Personalization</span><span class="name">Anthropic Claude</span><span class="why">The most reliable model I've used for first-person voice + strict-rule prompts. Direct SDK integration in the n8n step.</span></div>
+      <div class="stack-cell"><span class="role">Email</span><span class="name">Resend</span><span class="why">Transactional email that doesn't require fighting deliverability on day one. Tracking, bounces, and a clean React Email integration.</span></div>
+      <div class="stack-cell"><span class="role">Maps</span><span class="name">Mapbox GL</span><span class="why">Visualizing target companies on the map makes the geo-radius preference tangible to athletes during onboarding.</span></div>
+      <div class="stack-cell"><span class="role">Charts</span><span class="name">Recharts</span><span class="why">Dashboard widgets for outreach stats and deal pipeline. Composable, server-component-friendly.</span></div>
+      <div class="stack-cell"><span class="role">Inbox sync</span><span class="name">Google APIs</span><span class="why">Watches replies on athlete-connected Gmail accounts. Routes positive replies into /inbox.</span></div>
+      <div class="stack-cell"><span class="role">CSV bulk ops</span><span class="name">csv-parse / stringify</span><span class="why">For exporting deals and importing seed lists during onboarding.</span></div>
+      <div class="stack-cell"><span class="role">Drag &amp; drop</span><span class="name">dnd-kit</span><span class="why">Used in the deliverables setup so athletes can rank their offerings.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== §07 BUILD CHOICES ===== -->
+<section class="section" id="craft">
+  <div class="wrap">
+    <header class="section-header">
+      <div class="meta">
+        <div class="eyebrow">§07 · The build</div>
+        <h2 class="h-section">Six choices <em>I</em> can defend.</h2>
+      </div>
+      <p class="lede reveal">
+        Decisions that don't show up on a feature list, but that separate &ldquo;I bolted some tools together&rdquo; from &ldquo;I designed this&rdquo;.
+      </p>
+    </header>
+
+    <div class="fingerprints reveal-stagger">
+      <div class="fp">
+        <div class="fp-num">i.</div>
+        <div>
+          <h4>The shared database is the API</h4>
+          <p>The Next.js app and the n8n flows never call each other directly. Both read and write Postgres. The athlete edits a preference in the app, the next n8n run picks it up. n8n discovers a company, the athlete sees it in <span class="mono-inline">/brands</span> a second later. No internal API to version, no webhook contracts to maintain.</p>
+        </div>
+      </div>
+      <div class="fp">
+        <div class="fp-num">ii.</div>
+        <div>
+          <h4>RLS in the database, not the application</h4>
+          <p>Athlete data isolation is enforced by Postgres row-level security policies, not by application code that filters by <span class="mono-inline">athlete_id</span>. A bug in a Next.js route handler can't leak another athlete's data — the database itself refuses to return rows that don't belong to the requesting session.</p>
+        </div>
+      </div>
+      <div class="fp">
+        <div class="fp-num">iii.</div>
+        <div>
+          <h4>Discovery is rule-based, not semantic</h4>
+          <p>Match scores compare the athlete's preferences (industries, geo radius, size range, exclusion list) against company metadata. No embeddings, no semantic similarity. Cheaper, debuggable, and lets the AI step concentrate where it matters: writing the email.</p>
+        </div>
+      </div>
+      <div class="fp">
+        <div class="fp-num">iv.</div>
+        <div>
+          <h4>The personalization payload is stored, not just used</h4>
+          <p>Every campaign row keeps the JSON of what was sent to Claude and what came back. This makes it possible to run prompt-variant analysis later — which prompt template correlates with higher reply rates — without re-running anything.</p>
+        </div>
+      </div>
+      <div class="fp">
+        <div class="fp-num">v.</div>
+        <div>
+          <h4>Replies hand back to the human, not the bot</h4>
+          <p>Once a brand replies, the conversation moves to the athlete's <span class="mono-inline">/inbox</span> and the automation stops. Blitz doesn't try to negotiate deals — it gets the door open. The athlete closes from there, the platform tracks the deal, and commission gets deducted on payout. Clean separation between &ldquo;machine work&rdquo; and &ldquo;human work&rdquo;.</p>
+        </div>
+      </div>
+      <div class="fp">
+        <div class="fp-num">vi.</div>
+        <div>
+          <h4>An admin allowlist via env, not a role table</h4>
+          <p>The middleware checks <span class="mono-inline">NEXT_PUBLIC_ADMIN_EMAILS</span> for admin routes. For an MVP with a single admin (me) it's the right tradeoff: zero schema, no role-management UI, instant. When the user count justifies a real role table, the middleware swap is one PR.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== OUTRO ===== -->
+<section class="outro" id="end">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow" style="margin-bottom: 32px;">§08 · End of case study</div>
+      <h2>One more <em>build</em> on file.</h2>
+      <p class="lede" style="max-width: 56ch; margin-bottom: 56px;">
+        Blitz is the athlete-side mirror of Georgia. Same problem at the core — running personalized outreach at scale — different stack, different audience, different scaffolding around the AI.
+      </p>
+      <div class="next-project">
+        <a href="georgia.html" class="next-link">
+          <span class="next-eyebrow">Other case study</span>
+          <span class="next-title">Georgia <em>—</em> AI SDR for a B2B services firm</span>
+          <span class="next-meta">Retell AI · Make.com · Twilio · Anthropic · OpenAI</span>
+          <span class="next-arrow">→</span>
+        </a>
+      </div>
+      <p class="mono" style="margin-top: 64px; color: var(--ink-dim);">
+        Or <a href="index.html" style="color: var(--ink); border-bottom: 1px solid var(--accent); text-decoration: none; padding-bottom: 1px;">return to the index</a> for contact and other work.
+      </p>
+    </div>
+  </div>
+  <div class="wrap">
+    <footer>
+      <span>© 2026 Jacob Oliker</span>
+      <span>Blitz · independent project · MVP</span>
+      <span>Set in Fraunces · Inter Tight · JetBrains Mono</span>
+    </footer>
+  </div>
+</section>
+
+<script>
+document.body.classList.add('js-ready');
+requestAnimationFrame(() => {
+  document.querySelectorAll('.hero .reveal, .hero .reveal-stagger').forEach(el => el.classList.add('in'));
+});
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => {
+  if (!el.classList.contains('in')) io.observe(el);
+});
+</script>
+
+</body>
+</html>

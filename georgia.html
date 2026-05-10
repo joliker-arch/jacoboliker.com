@@ -1,0 +1,1592 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jacob Oliker · Georgia AI SDR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT@9..144,300..900,0..100&family=Inter+Tight:wght@300..700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   GEORGIA AI SDR — BUILD NOTES
+   Editorial / technical / dark
+   ============================================================ */
+
+:root {
+  --bg:        #0E0F12;
+  --bg-warm:   #14151A;
+  --bg-panel:  #1A1B20;
+  --line:      #2A2B31;
+  --line-soft: #1F2025;
+  --ink:       #F2EFE8;
+  --ink-mute:  #B8B4A8;
+  --ink-dim:   #75726A;
+  --accent:    #C8553D;
+  --accent-2:  #E8A87C;
+  --ok:        #6B9080;
+
+  --serif: 'Fraunces', Georgia, serif;
+  --sans: 'Inter Tight', -apple-system, BlinkMacSystemFont, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+
+  --max: 1240px;
+  --gutter: clamp(20px, 4vw, 56px);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.6;
+  font-weight: 380;
+  letter-spacing: -0.005em;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+::selection { background: var(--accent); color: var(--bg); }
+
+/* Subtle grain across the whole page */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.wrap {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+section { position: relative; }
+
+/* ============================================================
+   TYPOGRAPHY
+   ============================================================ */
+h1, h2, h3, h4 { font-family: var(--serif); font-weight: 360; letter-spacing: -0.02em; }
+
+.display {
+  font-family: var(--serif);
+  font-weight: 280;
+  font-size: clamp(48px, 7.4vw, 104px);
+  line-height: 0.96;
+  letter-spacing: -0.04em;
+  font-variation-settings: 'opsz' 144, 'SOFT' 30;
+}
+.display em {
+  font-style: italic;
+  font-weight: 320;
+  color: var(--accent);
+  font-variation-settings: 'opsz' 144, 'SOFT' 60;
+}
+
+.h-section {
+  font-family: var(--serif);
+  font-weight: 320;
+  font-size: clamp(36px, 5.5vw, 68px);
+  line-height: 1.0;
+  letter-spacing: -0.03em;
+  font-variation-settings: 'opsz' 96, 'SOFT' 30;
+}
+.h-section em { font-style: italic; color: var(--accent); }
+
+.h-sub {
+  font-family: var(--serif);
+  font-weight: 380;
+  font-size: clamp(22px, 2.4vw, 30px);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 24;
+}
+
+.eyebrow {
+  font-family: var(--mono);
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--accent);
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 1px;
+  background: var(--accent);
+  display: inline-block;
+}
+
+.lede {
+  font-family: var(--serif);
+  font-weight: 320;
+  font-size: clamp(20px, 2vw, 24px);
+  line-height: 1.45;
+  color: var(--ink-mute);
+  letter-spacing: -0.01em;
+  font-variation-settings: 'opsz' 24;
+  max-width: 62ch;
+}
+
+.body { max-width: 62ch; color: var(--ink-mute); }
+.body p + p { margin-top: 1em; }
+.body strong { color: var(--ink); font-weight: 500; }
+
+.mono { font-family: var(--mono); font-size: 0.86em; color: var(--ink-mute); letter-spacing: -0.01em; }
+
+/* ============================================================
+   NAV
+   ============================================================ */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  z-index: 50;
+  padding: 18px 0;
+  background: rgba(14,15,18,0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--line-soft);
+}
+.nav-inner {
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  color: var(--ink);
+  text-transform: uppercase;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+.nav-logo:hover { opacity: 0.85; }
+.nav-logo .dot {
+  display: inline-block;
+  width: 7px; height: 7px;
+  background: var(--accent);
+  border-radius: 50%;
+  margin-right: 9px;
+  vertical-align: middle;
+  animation: pulse 2.4s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.55; transform: scale(0.85); }
+}
+.nav-links {
+  display: flex; gap: 32px;
+  font-family: var(--mono);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.nav-links a {
+  color: var(--ink-mute);
+  text-decoration: none;
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-links a:hover { color: var(--accent); }
+.nav-links a.is-active {
+  color: var(--ink);
+}
+.nav-links a.is-active::after {
+  content: '';
+  position: absolute;
+  left: 0; right: 0;
+  bottom: -22px;
+  height: 1px;
+  background: var(--accent);
+}
+
+@media (max-width: 720px) {
+  .nav-links { display: none; }
+}
+
+/* ============================================================
+   HERO
+   ============================================================ */
+.hero {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  padding: 120px 0 80px;
+  position: relative;
+}
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 48px;
+  align-items: start;
+}
+@media (min-width: 900px) {
+  .hero-grid { grid-template-columns: 7fr 5fr; gap: 80px; }
+}
+.hero-tag {
+  margin-bottom: 32px;
+}
+.hero-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px 40px;
+  font-family: var(--mono);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ink-dim);
+  border-top: 1px solid var(--line);
+  padding-top: 28px;
+}
+.hero-meta dt { color: var(--ink-dim); margin-bottom: 4px; font-size: 10.5px; }
+.hero-meta dd { color: var(--ink); font-size: 13px; line-height: 1.4; letter-spacing: 0; text-transform: none; }
+.hero-meta dd em { color: var(--accent); font-style: normal; }
+
+.hero-side {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 19px;
+  font-weight: 360;
+  line-height: 1.45;
+  color: var(--ink-mute);
+  border-left: 1px solid var(--accent);
+  padding-left: 28px;
+  max-width: 380px;
+  font-variation-settings: 'opsz' 18, 'SOFT' 60;
+}
+.hero-side .by {
+  display: block;
+  font-style: normal;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  margin-top: 16px;
+}
+
+/* Hero metric strip */
+.metric-strip {
+  margin-top: 80px;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+@media (min-width: 700px) { .metric-strip { grid-template-columns: repeat(4, 1fr); } }
+.metric {
+  background: var(--bg);
+  padding: 28px 24px;
+  position: relative;
+}
+.metric .num {
+  font-family: var(--serif);
+  font-weight: 280;
+  font-size: clamp(40px, 4.5vw, 56px);
+  line-height: 1;
+  color: var(--ink);
+  letter-spacing: -0.03em;
+  font-variation-settings: 'opsz' 96, 'SOFT' 50;
+  display: block;
+}
+.metric .num em { font-style: italic; color: var(--accent); }
+.metric .lab {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--ink-dim);
+  margin-top: 12px;
+  display: block;
+}
+
+/* ============================================================
+   GENERIC SECTION
+   ============================================================ */
+.section {
+  padding: clamp(80px, 12vw, 160px) 0;
+  border-top: 1px solid var(--line-soft);
+}
+
+.section-header {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-bottom: 64px;
+}
+@media (min-width: 900px) {
+  .section-header { grid-template-columns: 5fr 7fr; gap: 80px; align-items: end; }
+}
+.section-header .meta {
+  display: flex; flex-direction: column; gap: 14px;
+}
+
+/* ============================================================
+   PLATFORMS GRID
+   ============================================================ */
+.platforms {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+@media (min-width: 720px) { .platforms { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1000px) { .platforms { grid-template-columns: repeat(4, 1fr); } }
+
+.platform {
+  background: var(--bg);
+  padding: 36px 32px 40px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 240px;
+  transition: background 0.3s;
+}
+.platform:hover { background: var(--bg-warm); }
+.platform-tag {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.platform h3 {
+  font-family: var(--serif);
+  font-size: 28px;
+  font-weight: 380;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-variation-settings: 'opsz' 32;
+}
+.platform p {
+  color: var(--ink-mute);
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+.platform-stack {
+  margin-top: auto;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--ink-dim);
+  padding-top: 16px;
+  border-top: 1px dashed var(--line);
+}
+
+/* ============================================================
+   ARCHITECTURE DIAGRAM
+   ============================================================ */
+.diagram-frame {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  padding: clamp(24px, 4vw, 56px);
+  position: relative;
+  overflow: hidden;
+}
+.diagram-frame::before {
+  content: 'fig.01 — system architecture';
+  position: absolute;
+  top: 16px; right: 20px;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.diagram-frame.fig-02::before { content: 'fig.02 — conversation graph'; }
+
+/* On narrow screens, allow horizontal scroll on the SVG so it stays
+   readable instead of crushing to a thumbnail. */
+.diagram-scroll {
+  margin: 0 calc(var(--gutter) * -0.5);
+  padding: 0 calc(var(--gutter) * 0.5);
+}
+@media (max-width: 700px) {
+  .diagram-frame {
+    padding: 36px 0 24px;
+    margin: 0 calc(var(--gutter) * -1);
+  }
+  .diagram-frame::before {
+    left: var(--gutter); right: auto;
+    top: 12px;
+  }
+  .diagram-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0 var(--gutter);
+    margin: 0;
+  }
+  .diagram-scroll svg { min-width: 760px; }
+  .diagram-scroll-hint {
+    display: block;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-dim);
+    padding: 12px var(--gutter) 0;
+    border-top: 1px dashed var(--line);
+    margin-top: 12px;
+  }
+  .diagram-scroll-hint::before { content: '← '; color: var(--accent); }
+  .diagram-scroll-hint::after { content: ' →'; color: var(--accent); }
+}
+.diagram-scroll-hint { display: none; }
+.diagram-frame svg { width: 100%; height: auto; display: block; }
+
+/* schematic styles inside SVGs */
+.sch-line { stroke: var(--line); stroke-width: 1; fill: none; }
+.sch-arrow { stroke: var(--ink-dim); stroke-width: 1.2; fill: none; }
+.sch-flow { stroke: var(--accent); stroke-width: 1.5; fill: none; }
+.sch-box { fill: var(--bg); stroke: var(--ink-dim); stroke-width: 1; }
+.sch-box-accent { fill: var(--bg); stroke: var(--accent); stroke-width: 1.4; }
+.sch-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--ink); letter-spacing: 0.04em; }
+.sch-label-sm { font-family: 'JetBrains Mono', monospace; font-size: 9.5px; fill: var(--ink-dim); letter-spacing: 0.06em; text-transform: uppercase; }
+.sch-title { font-family: 'Fraunces', serif; font-size: 16px; font-style: italic; fill: var(--ink); }
+
+/* ============================================================
+   CONVERSATION GRAPH
+   ============================================================ */
+.graph-container { position: relative; }
+.graph-legend {
+  margin-top: 32px;
+  display: flex; flex-wrap: wrap; gap: 28px;
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-dim);
+}
+.graph-legend span { display: inline-flex; align-items: center; gap: 9px; }
+.graph-legend i {
+  width: 12px; height: 12px;
+  border-radius: 2px;
+  display: inline-block;
+}
+.legend-entry { background: var(--bg); border: 1px solid var(--accent); }
+.legend-flow { background: var(--bg); border: 1px solid var(--ink-mute); }
+.legend-terminal { background: var(--accent); }
+.legend-global { background: var(--bg); border: 1.5px dashed var(--ink-mute); }
+
+/* ============================================================
+   PIPELINE TIMELINE
+   ============================================================ */
+.timeline {
+  position: relative;
+  padding-left: 0;
+}
+.timeline-row {
+  display: grid;
+  grid-template-columns: 56px 1fr;
+  gap: 24px;
+  border-top: 1px solid var(--line-soft);
+  padding: 32px 0;
+  align-items: start;
+  transition: background 0.3s;
+}
+.timeline-row:last-child { border-bottom: 1px solid var(--line-soft); }
+.timeline-row:hover { background: linear-gradient(90deg, transparent, var(--bg-warm) 30%, transparent 100%); }
+.timeline-row[data-kind="webhook"] .tl-num { color: var(--accent); }
+
+.tl-num {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-dim);
+  letter-spacing: 0.04em;
+  padding-top: 4px;
+  text-align: left;
+}
+.tl-content {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+}
+@media (min-width: 800px) {
+  .tl-content { grid-template-columns: 5fr 4fr 3fr; gap: 32px; align-items: start; }
+}
+.tl-title {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 380;
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  font-variation-settings: 'opsz' 24;
+}
+.tl-title .when {
+  display: block;
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-style: normal;
+  margin-bottom: 6px;
+}
+.tl-desc {
+  color: var(--ink-mute);
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+.tl-tech {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--ink-dim);
+  letter-spacing: 0.02em;
+  line-height: 1.7;
+}
+.tl-tech .tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border: 1px solid var(--line);
+  margin: 0 4px 4px 0;
+  border-radius: 2px;
+  background: var(--bg-panel);
+  white-space: nowrap;
+  font-size: 10.5px;
+}
+
+/* ============================================================
+   AI LAYERS
+   ============================================================ */
+.ai-layers {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+@media (min-width: 900px) { .ai-layers { grid-template-columns: 1fr 1fr; gap: 1px; background: var(--line); border: 1px solid var(--line); } }
+
+.ai-card {
+  background: var(--bg);
+  padding: 40px 36px 44px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.ai-card .layer-num {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.ai-card h3 {
+  font-family: var(--serif);
+  font-size: 30px;
+  font-weight: 380;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.ai-card .model-line {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-dim);
+  border-top: 1px dashed var(--line);
+  border-bottom: 1px dashed var(--line);
+  padding: 14px 0;
+  margin: 4px 0 0;
+  letter-spacing: 0.02em;
+}
+.ai-card .model-line strong { color: var(--ink); font-weight: 500; }
+.ai-card p { color: var(--ink-mute); font-size: 14.5px; line-height: 1.6; }
+.ai-card .prompt-snip {
+  font-family: var(--mono);
+  font-size: 12.5px;
+  background: var(--bg-panel);
+  border-left: 2px solid var(--accent);
+  padding: 14px 16px;
+  color: var(--ink-mute);
+  white-space: pre-wrap;
+  line-height: 1.55;
+}
+
+/* ============================================================
+   STACK GRID
+   ============================================================ */
+.stack-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+@media (min-width: 720px) { .stack-grid { grid-template-columns: repeat(3, 1fr); } }
+
+.stack-cell {
+  background: var(--bg);
+  padding: 28px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 130px;
+}
+.stack-cell .name {
+  font-family: var(--serif);
+  font-size: 21px;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  font-variation-settings: 'opsz' 24;
+}
+.stack-cell .role {
+  font-family: var(--mono);
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent);
+}
+.stack-cell .why {
+  color: var(--ink-mute);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-top: auto;
+}
+
+/* ============================================================
+   FINGERPRINTS (the build / craft)
+   ============================================================ */
+.fingerprints {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0;
+}
+@media (min-width: 900px) { .fingerprints { grid-template-columns: 1fr 1fr; gap: 0 80px; } }
+.fp {
+  border-top: 1px solid var(--line-soft);
+  padding: 36px 0;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 28px;
+  align-items: start;
+}
+.fp:last-child { border-bottom: 1px solid var(--line-soft); }
+.fp-num {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 32px;
+  font-weight: 320;
+  color: var(--accent);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  width: 56px;
+  font-variation-settings: 'opsz' 36;
+}
+.fp h4 {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 400;
+  letter-spacing: -0.015em;
+  margin-bottom: 10px;
+  line-height: 1.2;
+}
+.fp p {
+  color: var(--ink-mute);
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+/* ============================================================
+   CTA / FOOTER
+   ============================================================ */
+.outro {
+  padding: clamp(100px, 16vw, 200px) 0 clamp(80px, 10vw, 140px);
+  border-top: 1px solid var(--line-soft);
+}
+.outro h2 {
+  font-family: var(--serif);
+  font-weight: 280;
+  font-size: clamp(48px, 8vw, 110px);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+  font-variation-settings: 'opsz' 144, 'SOFT' 30;
+  margin-bottom: 40px;
+  max-width: 16ch;
+}
+.outro h2 em { color: var(--accent); font-style: italic; }
+.outro-meta {
+  display: flex; flex-wrap: wrap; gap: 32px 60px;
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  margin-top: 40px;
+  padding-top: 32px;
+  border-top: 1px solid var(--line);
+}
+.outro-meta a {
+  color: var(--ink);
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent);
+  padding-bottom: 1px;
+  transition: color 0.2s;
+}
+.outro-meta a:hover { color: var(--accent); }
+.outro-meta .label {
+  display: block;
+  font-size: 10.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--ink-dim);
+  margin-bottom: 6px;
+}
+
+footer {
+  padding: 32px 0;
+  border-top: 1px solid var(--line-soft);
+  font-family: var(--mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--ink-dim);
+  display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between;
+}
+
+/* ============================================================
+   NEXT-PROJECT LINK (cross-page navigation)
+   ============================================================ */
+.next-project {
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  margin-top: 48px;
+}
+.next-link {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-areas:
+    "eyebrow arrow"
+    "title arrow"
+    "meta arrow";
+  gap: 4px 32px;
+  padding: 36px 8px;
+  text-decoration: none;
+  color: var(--ink);
+  transition: padding 0.4s cubic-bezier(.2,.65,.25,1);
+}
+.next-link:hover { padding-left: 24px; padding-right: 24px; }
+.next-eyebrow {
+  grid-area: eyebrow;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.next-title {
+  grid-area: title;
+  font-family: var(--serif);
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 320;
+  line-height: 1.05;
+  letter-spacing: -0.025em;
+  font-variation-settings: 'opsz' 64;
+}
+.next-title em { font-style: italic; color: var(--accent); }
+.next-meta {
+  grid-area: meta;
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--ink-dim);
+  margin-top: 8px;
+  letter-spacing: 0.02em;
+}
+.next-arrow {
+  grid-area: arrow;
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 56px;
+  font-weight: 280;
+  color: var(--ink-mute);
+  align-self: center;
+  transition: transform 0.4s cubic-bezier(.2,.65,.25,1), color 0.3s;
+}
+.next-link:hover .next-arrow { transform: translateX(12px); color: var(--accent); }
+
+/* ============================================================
+   SCROLL REVEAL
+   The .reveal class kicks in only after JS has marked the body
+   as ready — this prevents a flash of empty page if JS is blocked
+   or if the user prefers reduced motion.
+   ============================================================ */
+body.js-ready .reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.9s cubic-bezier(.2,.65,.25,1), transform 0.9s cubic-bezier(.2,.65,.25,1);
+}
+body.js-ready .reveal.in { opacity: 1; transform: none; }
+body.js-ready .reveal-stagger > * {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.7s cubic-bezier(.2,.65,.25,1), transform 0.7s cubic-bezier(.2,.65,.25,1);
+}
+body.js-ready .reveal-stagger.in > * { opacity: 1; transform: none; }
+body.js-ready .reveal-stagger.in > *:nth-child(1) { transition-delay: 0.05s; }
+body.js-ready .reveal-stagger.in > *:nth-child(2) { transition-delay: 0.12s; }
+body.js-ready .reveal-stagger.in > *:nth-child(3) { transition-delay: 0.19s; }
+body.js-ready .reveal-stagger.in > *:nth-child(4) { transition-delay: 0.26s; }
+body.js-ready .reveal-stagger.in > *:nth-child(5) { transition-delay: 0.33s; }
+body.js-ready .reveal-stagger.in > *:nth-child(6) { transition-delay: 0.40s; }
+body.js-ready .reveal-stagger.in > *:nth-child(7) { transition-delay: 0.47s; }
+body.js-ready .reveal-stagger.in > *:nth-child(8) { transition-delay: 0.54s; }
+body.js-ready .reveal-stagger.in > *:nth-child(9) { transition-delay: 0.61s; }
+body.js-ready .reveal-stagger.in > *:nth-child(10) { transition-delay: 0.68s; }
+body.js-ready .reveal-stagger.in > *:nth-child(11) { transition-delay: 0.75s; }
+
+/* Path draw animation for SVGs */
+.draw {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  transition: stroke-dashoffset 2s cubic-bezier(.4, 0, .2, 1);
+}
+.in .draw { stroke-dashoffset: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .reveal-stagger > * { opacity: 1; transform: none; transition: none; }
+  .draw { stroke-dasharray: none; stroke-dashoffset: 0; }
+  body::before { display: none; }
+  .nav-logo .dot { animation: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="nav">
+  <div class="wrap nav-inner">
+    <a href="index.html" class="nav-logo"><span class="dot"></span>JACOB OLIKER</a>
+    <div class="nav-links">
+      <a href="index.html">Index</a>
+      <a href="georgia.html" class="is-active">Georgia</a>
+      <a href="blitz.html">Blitz</a>
+      <a href="index.html#contact">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <div class="hero-tag eyebrow">Case Study · Georgia AI SDR · 2026</div>
+        <h1 class="display reveal">
+          A voice agent,<br>
+          ten orchestrated<br>
+          scenarios,<br>
+          <em>one outbound</em><br>
+          <em>pipeline.</em>
+        </h1>
+        <dl class="hero-meta reveal" style="margin-top: 56px;">
+          <div><dt>Built by</dt><dd>Jacob Oliker</dd></div>
+          <div><dt>Role</dt><dd>AI GTM / Customer Solutions</dd></div>
+          <div><dt>Stack</dt><dd>Retell AI · Make.com · Twilio · Google Workspace · Anthropic · OpenAI</dd></div>
+          <div><dt>Status</dt><dd><em>● Live in production</em></dd></div>
+        </dl>
+      </div>
+      <aside class="hero-side reveal">
+        Georgia is an AI sales development rep. She introduces herself as one. She makes the call, qualifies the prospect, books the meeting, sends the SMS confirmation, and triggers a seven-email follow-up sequence — automatically, on every lead.
+        <span class="by">A study in agentic infrastructure</span>
+      </aside>
+    </div>
+
+    <!-- Metric strip -->
+    <div class="metric-strip reveal-stagger">
+      <div class="metric"><span class="num">10</span><span class="lab">Make.com scenarios orchestrated</span></div>
+      <div class="metric"><span class="num">11</span><span class="lab">Conversation nodes in the agent</span></div>
+      <div class="metric"><span class="num"><em>4</em>+<em>7</em></span><span class="lab">Calls + emails per prospect</span></div>
+      <div class="metric"><span class="num">2</span><span class="lab">LLMs working in concert</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SYSTEM OVERVIEW (PLATFORMS) ===== -->
+<section class="section" id="system">
+  <div class="wrap">
+    <header class="section-header">
+      <div class="meta">
+        <div class="eyebrow">§01 · The system</div>
+        <h2 class="h-section">Four platforms, <em>one</em> nervous system.</h2>
+      </div>
+      <p class="lede reveal">
+        Each platform owns one capability and stays in its lane. The intelligence lives in how they hand off: Retell carries the voice, Make does the orchestration, Twilio handles telephony and SMS, Google Workspace is the system of record. Replace any one of them and the rest still works.
+      </p>
+    </header>
+
+    <div class="platforms reveal-stagger">
+      <div class="platform">
+        <span class="platform-tag">§ 01·a — Voice</span>
+        <h3>Retell AI</h3>
+        <p>Hosts the agent. An 11-node conversation graph runs on GPT-4.1 Mini for live dialogue, with Claude Sonnet 4.6 doing structured extraction the moment the call ends.</p>
+        <div class="platform-stack">GPT-4.1 Mini · Claude Sonnet 4.6 · custom analysis schema</div>
+      </div>
+      <div class="platform">
+        <span class="platform-tag">§ 01·b — Orchestration</span>
+        <h3>Make.com</h3>
+        <p>Ten scenarios chained end-to-end. One paces the dialer. One handles every post-call event. Eight more govern the email cadence — triggered, branched, and idempotent.</p>
+        <div class="platform-stack">10 scenarios · 4 routers · webhook + scheduled triggers</div>
+      </div>
+      <div class="platform">
+        <span class="platform-tag">§ 01·c — Telephony</span>
+        <h3>Twilio</h3>
+        <p>Outbound calls go over a SIP trunk to Retell. Confirmation SMS flows back through a Messaging Service. Brand registered, A2P 10DLC compliant, CNAM verified end-to-end.</p>
+        <div class="platform-stack">SIP trunk · A2P 10DLC · CNAM · Messaging Service</div>
+      </div>
+      <div class="platform">
+        <span class="platform-tag">§ 01·d — System of record</span>
+        <h3>Google Workspace</h3>
+        <p>Sheets are the database — Call Queue plus an append-only log. Docs auto-generate per-call qualified-lead reports from a template. Drive holds collateral the emails attach.</p>
+        <div class="platform-stack">Sheets API · Docs templates · Drive folders</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== ARCHITECTURE DIAGRAM ===== -->
+<section class="section" id="architecture">
+  <div class="wrap">
+    <header class="section-header">
+      <div class="meta">
+        <div class="eyebrow">§02 · Architecture</div>
+        <h2 class="h-section">One lead, <em>traced</em> through every system.</h2>
+      </div>
+      <p class="lede reveal">
+        From the moment a row is added to the lead sheet to the morning the team lead gets a text saying a meeting was just booked — every hop, every API call, every state mutation. The accent path is the happy case.
+      </p>
+    </header>
+
+    <div class="diagram-frame reveal">
+      <div class="diagram-scroll">
+      <svg viewBox="0 0 1200 660" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="System architecture diagram">
+        <!-- Background grid -->
+        <defs>
+          <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+            <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#1F2025" stroke-width="0.5"/>
+          </pattern>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#75726A"/>
+          </marker>
+          <marker id="arrow-flow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#C8553D"/>
+          </marker>
+        </defs>
+        <rect width="1200" height="660" fill="url(#grid)" opacity="0.4"/>
+
+        <!-- Column headers -->
+        <text x="120" y="40" class="sch-label-sm" text-anchor="middle">SOURCE OF TRUTH</text>
+        <text x="380" y="40" class="sch-label-sm" text-anchor="middle">ORCHESTRATION</text>
+        <text x="640" y="40" class="sch-label-sm" text-anchor="middle">VOICE LAYER</text>
+        <text x="900" y="40" class="sch-label-sm" text-anchor="middle">EXTERNAL SERVICES</text>
+        <text x="1110" y="40" class="sch-label-sm" text-anchor="middle">OUTPUT</text>
+
+        <!-- Vertical column dividers -->
+        <line x1="240" y1="55" x2="240" y2="630" class="sch-line" stroke-dasharray="2 4"/>
+        <line x1="510" y1="55" x2="510" y2="630" class="sch-line" stroke-dasharray="2 4"/>
+        <line x1="770" y1="55" x2="770" y2="630" class="sch-line" stroke-dasharray="2 4"/>
+        <line x1="1010" y1="55" x2="1010" y2="630" class="sch-line" stroke-dasharray="2 4"/>
+
+        <!-- ============= GOOGLE SHEETS ============= -->
+        <rect x="40" y="80" width="160" height="80" class="sch-box-accent" rx="2"/>
+        <text x="120" y="108" class="sch-title" text-anchor="middle">Lead Sheet</text>
+        <text x="120" y="128" class="sch-label-sm" text-anchor="middle">CALL QUEUE TAB</text>
+        <text x="120" y="146" class="sch-label-sm" text-anchor="middle" fill="#75726A">[ apollo · csv ]</text>
+
+        <!-- Sheet → Enrichment arrow -->
+        <path d="M 200 120 L 260 120" class="sch-flow draw" marker-end="url(#arrow-flow)"/>
+        <text x="230" y="113" class="sch-label-sm" text-anchor="middle">new row</text>
+
+        <!-- ============= ENRICHMENT ============= -->
+        <rect x="260" y="80" width="220" height="80" class="sch-box" rx="2"/>
+        <text x="370" y="108" class="sch-title" text-anchor="middle">Enrichment</text>
+        <text x="370" y="128" class="sch-label-sm" text-anchor="middle">SCENARIO 01</text>
+        <text x="370" y="146" class="sch-label-sm" text-anchor="middle" fill="#75726A">→ Serper · OpenAI</text>
+
+        <!-- Enrichment ↔ Serper -->
+        <path d="M 480 130 L 820 130" class="sch-arrow draw" marker-end="url(#arrow)"/>
+        <rect x="820" y="100" width="160" height="60" class="sch-box" rx="2"/>
+        <text x="900" y="124" class="sch-title" text-anchor="middle" font-size="14">Serper</text>
+        <text x="900" y="146" class="sch-label-sm" text-anchor="middle">GOOGLE SEARCH</text>
+
+        <!-- Enrichment ↔ OpenAI -->
+        <path d="M 480 145 L 820 195" class="sch-arrow draw" marker-end="url(#arrow)"/>
+        <rect x="820" y="180" width="160" height="60" class="sch-box" rx="2"/>
+        <text x="900" y="204" class="sch-title" text-anchor="middle" font-size="14">OpenAI</text>
+        <text x="900" y="225" class="sch-label-sm" text-anchor="middle">GPT-4o-MINI · JSON</text>
+
+        <!-- Enrichment writes back -->
+        <path d="M 370 160 L 370 200 L 200 200 L 200 165" class="sch-flow draw" marker-end="url(#arrow-flow)"/>
+        <text x="285" y="194" class="sch-label-sm" text-anchor="middle">writes summary + keywords</text>
+
+        <!-- ============= COLD EMAIL ============= -->
+        <rect x="260" y="240" width="220" height="60" class="sch-box" rx="2"/>
+        <text x="370" y="266" class="sch-title" text-anchor="middle">Cold Email · E1</text>
+        <text x="370" y="285" class="sch-label-sm" text-anchor="middle">SCENARIO 02</text>
+
+        <!-- Sheet → Cold Email -->
+        <path d="M 200 220 L 200 270 L 260 270" class="sch-flow draw" marker-end="url(#arrow-flow)"/>
+
+        <!-- ============= DIALER ============= -->
+        <rect x="260" y="320" width="220" height="80" class="sch-box-accent" rx="2"/>
+        <text x="370" y="350" class="sch-title" text-anchor="middle">Outbound Dialer</text>
+        <text x="370" y="370" class="sch-label-sm" text-anchor="middle">SCENARIO 03 · CALLS 1-4</text>
+        <text x="370" y="388" class="sch-label-sm" text-anchor="middle" fill="#C8553D">[ 4-route router ]</text>
+
+        <!-- Sheet → Dialer -->
+        <path d="M 200 250 L 200 360 L 260 360" class="sch-flow draw" marker-end="url(#arrow-flow)"/>
+
+        <!-- Dialer → Retell -->
+        <path d="M 480 360 L 540 360" class="sch-flow draw" marker-end="url(#arrow-flow)"/>
+        <text x="510" y="350" class="sch-label-sm" text-anchor="middle">POST</text>
+
+        <!-- ============= RETELL ============= -->
+        <rect x="540" y="320" width="220" height="80" class="sch-box-accent" rx="2"/>
+        <text x="650" y="350" class="sch-title" text-anchor="middle">Retell · Georgia</text>
+        <text x="650" y="370" class="sch-label-sm" text-anchor="middle">GPT-4.1 MINI · 11 NODES</text>
+        <text x="650" y="388" class="sch-label-sm" text-anchor="middle" fill="#75726A">[ live conversation ]</text>
+
+        <!-- Retell ↔ Twilio -->
+        <path d="M 760 345 L 820 345" class="sch-arrow draw" marker-end="url(#arrow)"/>
+        <rect x="820" y="320" width="160" height="60" class="sch-box" rx="2"/>
+        <text x="900" y="344" class="sch-title" text-anchor="middle" font-size="14">Twilio</text>
+        <text x="900" y="365" class="sch-label-sm" text-anchor="middle">SIP TRUNK · VOICE</text>
+
+        <!-- Retell ↔ Sonnet 4.6 (post-call extraction) -->
+        <path d="M 760 380 L 820 410" class="sch-arrow draw" marker-end="url(#arrow)"/>
+        <rect x="820" y="400" width="160" height="60" class="sch-box" rx="2"/>
+        <text x="900" y="424" class="sch-title" text-anchor="middle" font-size="14">Anthropic</text>
+        <text x="900" y="446" class="sch-label-sm" text-anchor="middle">SONNET 4.6 · EXTRACT</text>
+
+        <!-- Retell → Webhook -->
+        <path d="M 650 400 L 650 460 L 470 460" class="sch-flow draw" marker-end="url(#arrow-flow)"/>
+        <text x="555" y="453" class="sch-label-sm" text-anchor="middle">call_analyzed event</text>
+
+        <!-- ============= WEBHOOK ============= -->
+        <rect x="260" y="430" width="220" height="80" class="sch-box-accent" rx="2"/>
+        <text x="370" y="460" class="sch-title" text-anchor="middle">Post-Call Webhook</text>
+        <text x="370" y="480" class="sch-label-sm" text-anchor="middle">SCENARIO 04 · INSTANT</text>
+        <text x="370" y="498" class="sch-label-sm" text-anchor="middle" fill="#C8553D">[ 4 outcome routes ]</text>
+
+        <!-- Webhook → Sheets (log) -->
+        <path d="M 260 460 L 200 460 L 200 165" class="sch-flow draw" marker-end="url(#arrow-flow)" opacity="0.55"/>
+        <text x="170" y="320" class="sch-label-sm" text-anchor="end" transform="rotate(-90 170 320)">append + update</text>
+
+        <!-- Webhook → SMS confirm -->
+        <path d="M 480 460 L 820 480" class="sch-flow draw" marker-end="url(#arrow-flow)"/>
+        <rect x="820" y="470" width="160" height="50" class="sch-box-accent" rx="2"/>
+        <text x="900" y="495" class="sch-title" text-anchor="middle" font-size="14">Twilio SMS</text>
+        <text x="900" y="510" class="sch-label-sm" text-anchor="middle">CONFIRM + ALERT</text>
+
+        <!-- SMS → Prospect / Team Lead -->
+        <path d="M 980 495 L 1090 495" class="sch-arrow draw" marker-end="url(#arrow)"/>
+        <rect x="1040" y="475" width="120" height="40" class="sch-box-accent" rx="2"/>
+        <text x="1100" y="498" class="sch-title" text-anchor="middle" font-size="13">Prospect / Lead</text>
+
+        <!-- Webhook → Docs -->
+        <path d="M 480 490 L 820 555" class="sch-flow draw" marker-end="url(#arrow-flow)"/>
+        <rect x="820" y="540" width="160" height="50" class="sch-box" rx="2"/>
+        <text x="900" y="565" class="sch-title" text-anchor="middle" font-size="14">Google Docs</text>
+        <text x="900" y="580" class="sch-label-sm" text-anchor="middle">CALL REPORT GEN</text>
+
+        <!-- ============= EMAIL CASCADE ============= -->
+        <rect x="260" y="540" width="220" height="80" class="sch-box" rx="2"/>
+        <text x="370" y="570" class="sch-title" text-anchor="middle">Email Cascade</text>
+        <text x="370" y="588" class="sch-label-sm" text-anchor="middle">SCENARIOS 05 — 10</text>
+        <text x="370" y="606" class="sch-label-sm" text-anchor="middle" fill="#75726A">[ E2 · E3 · E4 · E5 · E6 · E7 ]</text>
+
+        <!-- Sheet → Email Cascade (state-driven) -->
+        <path d="M 120 165 L 120 580 L 260 580" class="sch-flow draw" marker-end="url(#arrow-flow)"/>
+        <text x="130" y="380" class="sch-label-sm" transform="rotate(-90 130 380)">state-driven · no orchestrator</text>
+
+        <!-- Email Cascade ↔ Anthropic Sonnet 4 (per-prospect personalization) -->
+        <path d="M 480 555 Q 700 555, 820 230" class="sch-arrow draw" marker-end="url(#arrow)" opacity="0.4"/>
+        <text x="640" y="500" class="sch-label-sm" text-anchor="middle" fill="#75726A">claude · per-lead phrase</text>
+
+        <!-- Cascade → Gmail (output) -->
+        <path d="M 480 595 L 1040 595" class="sch-flow draw" marker-end="url(#arrow-flow)"/>
+        <rect x="1040" y="572" width="120" height="50" class="sch-box-accent" rx="2"/>
+        <text x="1100" y="595" class="sch-title" text-anchor="middle" font-size="13">Gmail</text>
+        <text x="1100" y="612" class="sch-label-sm" text-anchor="middle">SEND / REPLY</text>
+
+      </svg>
+      </div>
+      <span class="diagram-scroll-hint">scroll to pan</span>
+    </div>
+
+    <!-- Caption -->
+    <p class="mono reveal" style="margin-top: 24px; max-width: 80ch; line-height: 1.7;">
+      The accent paths trace the qualified-lead flow. The agent never has to know about the email cascade or the report generator — every system reads from the sheet, mutates one column, and exits. Composability falls out naturally.
+    </p>
+  </div>
+</section>
+
+<!-- ===== CONVERSATION GRAPH ===== -->
+<section class="section" id="agent">
+  <div class="wrap">
+    <header class="section-header">
+      <div class="meta">
+        <div class="eyebrow">§03 · The agent</div>
+        <h2 class="h-section">Eleven nodes. <em>Two</em> mandatory outcomes.</h2>
+      </div>
+      <p class="lede reveal">
+        Georgia never ends a call without either (a) a meeting on the calendar or (b) a specific callback day and time. The conversation graph enforces this with three global nodes that any state can route into — objection handling, callback, not-interested — and four terminal nodes that close the call cleanly.
+      </p>
+    </header>
+
+    <div class="diagram-frame fig-02 graph-container reveal">
+      <div class="diagram-scroll">
+      <svg viewBox="0 0 1200 720" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Georgia conversation graph">
+        <defs>
+          <marker id="garrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#75726A"/>
+          </marker>
+          <marker id="garrow-h" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M 0 0 L 10 5 L 0 10 z" fill="#C8553D"/>
+          </marker>
+        </defs>
+
+        <!-- Top-left subhead -->
+        <text x="40" y="44" class="sch-label-sm">HAPPY PATH IN ACCENT · GLOBAL ROUTES DASHED · TERMINALS BELOW</text>
+
+        <!-- ============= NODES ============= -->
+        <!-- Opener -->
+        <rect x="60" y="100" width="200" height="60" class="sch-box-accent" rx="3"/>
+        <text x="160" y="128" class="sch-title" text-anchor="middle">opener</text>
+        <text x="160" y="146" class="sch-label-sm" text-anchor="middle">CONFIRM IDENTITY</text>
+
+        <!-- Pitch -->
+        <rect x="320" y="100" width="200" height="60" class="sch-box-accent" rx="3"/>
+        <text x="420" y="128" class="sch-title" text-anchor="middle">opener_pitch</text>
+        <text x="420" y="146" class="sch-label-sm" text-anchor="middle">27-SEC FRAME</text>
+
+        <!-- Qualifying -->
+        <rect x="580" y="100" width="200" height="60" class="sch-box-accent" rx="3"/>
+        <text x="680" y="128" class="sch-title" text-anchor="middle">qualifying</text>
+        <text x="680" y="146" class="sch-label-sm" text-anchor="middle">3 QUESTIONS</text>
+
+        <!-- Close -->
+        <rect x="840" y="100" width="200" height="60" class="sch-box-accent" rx="3"/>
+        <text x="940" y="128" class="sch-title" text-anchor="middle">close</text>
+        <text x="940" y="146" class="sch-label-sm" text-anchor="middle">DAY · TIME · PHONE</text>
+
+        <!-- happy path arrows -->
+        <path d="M 260 130 L 320 130" class="sch-flow" marker-end="url(#garrow-h)"/>
+        <path d="M 520 130 L 580 130" class="sch-flow" marker-end="url(#garrow-h)"/>
+        <path d="M 780 130 L 840 130" class="sch-flow" marker-end="url(#garrow-h)"/>
+
+        <!-- Branch A label (skip qualifying) -->
+        <path d="M 420 160 Q 420 220, 940 220 L 940 160" class="sch-flow" stroke-dasharray="3 4" marker-end="url(#garrow-h)" opacity="0.6"/>
+        <text x="680" y="240" class="sch-label-sm" text-anchor="middle" fill="#C8553D">BRANCH A · saw email · skip qualifying</text>
+
+        <!-- ============= GLOBAL NODES ============= -->
+        <!-- Objection handling -->
+        <rect x="320" y="320" width="200" height="60" class="sch-box" rx="3" stroke-dasharray="3 3"/>
+        <text x="420" y="348" class="sch-title" text-anchor="middle">objection_handling</text>
+        <text x="420" y="365" class="sch-label-sm" text-anchor="middle">★ GLOBAL · 1 PUSH MAX</text>
+
+        <!-- Callback -->
+        <rect x="580" y="320" width="200" height="60" class="sch-box" rx="3" stroke-dasharray="3 3"/>
+        <text x="680" y="348" class="sch-title" text-anchor="middle">callback</text>
+        <text x="680" y="365" class="sch-label-sm" text-anchor="middle">★ GLOBAL · DAY+TIME</text>
+
+        <!-- Not interested -->
+        <rect x="840" y="320" width="200" height="60" class="sch-box" rx="3" stroke-dasharray="3 3"/>
+        <text x="940" y="348" class="sch-title" text-anchor="middle">not_interested</text>
+        <text x="940" y="365" class="sch-label-sm" text-anchor="middle">★ GLOBAL · 1 SOFT ASK</text>
+
+        <!-- Routes from main path INTO globals (curve down) -->
+        <path d="M 420 160 L 420 320" class="sch-arrow" stroke-dasharray="2 3" marker-end="url(#garrow)"/>
+        <path d="M 680 160 L 680 320" class="sch-arrow" stroke-dasharray="2 3" marker-end="url(#garrow)"/>
+        <path d="M 940 160 L 940 320" class="sch-arrow" stroke-dasharray="2 3" marker-end="url(#garrow)"/>
+        <path d="M 160 160 Q 160 320, 320 350" class="sch-arrow" stroke-dasharray="2 3" marker-end="url(#garrow)"/>
+
+        <!-- Routes BETWEEN globals -->
+        <path d="M 520 350 L 580 350" class="sch-arrow" marker-end="url(#garrow)"/>
+        <path d="M 780 350 L 840 350" class="sch-arrow" marker-end="url(#garrow)"/>
+        <path d="M 420 380 Q 420 460, 680 460 L 680 380" class="sch-arrow" stroke-dasharray="2 3" marker-end="url(#garrow)" opacity="0.5"/>
+
+        <!-- ============= TERMINAL NODES ============= -->
+        <!-- Big band header -->
+        <line x1="40" y1="540" x2="1160" y2="540" class="sch-line"/>
+        <text x="40" y="530" class="sch-label-sm">TERMINAL · END CALL · SET call_outcome</text>
+
+        <!-- end_call_qualified -->
+        <rect x="60" y="570" width="240" height="80" class="sch-box-accent" rx="3" fill="#C8553D" fill-opacity="0.08"/>
+        <text x="180" y="600" class="sch-title" text-anchor="middle">end_call_qualified</text>
+        <text x="180" y="620" class="sch-label-sm" text-anchor="middle">→ MEETING BOOKED</text>
+        <text x="180" y="638" class="sch-label-sm" text-anchor="middle" fill="#75726A">happy path</text>
+
+        <!-- end_call_callback -->
+        <rect x="320" y="570" width="240" height="80" class="sch-box" rx="3"/>
+        <text x="440" y="600" class="sch-title" text-anchor="middle">end_call_callback</text>
+        <text x="440" y="620" class="sch-label-sm" text-anchor="middle">→ TRY BACK LATER</text>
+        <text x="440" y="638" class="sch-label-sm" text-anchor="middle" fill="#75726A">callback queue</text>
+
+        <!-- end_call_not_interested -->
+        <rect x="580" y="570" width="240" height="80" class="sch-box" rx="3"/>
+        <text x="700" y="600" class="sch-title" text-anchor="middle">end_call_not_interested</text>
+        <text x="700" y="620" class="sch-label-sm" text-anchor="middle">→ SUPPRESS</text>
+        <text x="700" y="638" class="sch-label-sm" text-anchor="middle" fill="#75726A">do-not-contact</text>
+
+        <!-- wrong_person -->
+        <rect x="840" y="570" width="240" height="80" class="sch-box" rx="3"/>
+        <text x="960" y="600" class="sch-title" text-anchor="middle">wrong_person</text>
+        <text x="960" y="620" class="sch-label-sm" text-anchor="middle">→ APOLOGIZE · END</text>
+        <text x="960" y="638" class="sch-label-sm" text-anchor="middle" fill="#75726A">filtered out</text>
+
+        <!-- Routes into terminals from main flow & globals -->
+        <!-- close → end_call_qualified (the main happy path) -->
+        <path d="M 940 160 Q 940 380, 600 540 L 200 568" class="sch-flow" marker-end="url(#garrow-h)" opacity="0.85"/>
+        <!-- callback global → end_call_callback -->
+        <path d="M 680 380 L 460 568" class="sch-arrow" marker-end="url(#garrow)" opacity="0.6"/>
+        <!-- not_interested global → end_call_not_interested -->
+        <path d="M 940 380 L 720 568" class="sch-arrow" marker-end="url(#garrow)" opacity="0.6"/>
+        <!-- opener (top-left) → wrong_person (bottom-right) for wrong-person case -->
+        <path d="M 160 160 Q 1100 140, 1100 538" class="sch-arrow" stroke-dasharray="2 4" marker-end="url(#garrow)" opacity="0.45"/>
+
+        <!-- Annotation -->
+        <text x="600" y="690" class="sch-title" font-size="13" text-anchor="middle">Always lead with the prospect&#8217;s problem · never push back more than once · disclose the AI</text>
+      </svg>
+      </div>
+      <span class="diagram-scroll-hint">scroll to pan</span>
+    </div>
+
+    <div class="graph-legend">
+      <span><i class="legend-entry"></i>Entry / linear flow</span>
+      <span><i class="legend-flow"></i>Conversation node</span>
+      <span><i class="legend-global"></i>Global · routable from anywhere</span>
+      <span><i class="legend-terminal"></i>Terminal · ends call</span>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PIPELINE TIMELINE ===== -->
+<section class="section" id="pipeline">
+  <div class="wrap">
+    <header class="section-header">
+      <div class="meta">
+        <div class="eyebrow">§04 · The pipeline</div>
+        <h2 class="h-section">Ten scenarios, <em>two</em> weeks of contact.</h2>
+      </div>
+      <p class="lede reveal">
+        Each scenario owns one stage of the lead's lifecycle. They share state through the lead sheet, so any one of them can be paused, edited, or replaced without touching the others. This is the entire outbound cadence as it actually runs in production.
+      </p>
+    </header>
+
+    <div class="timeline reveal-stagger">
+      <!-- 01 -->
+      <div class="timeline-row">
+        <div class="tl-num">01</div>
+        <div class="tl-content">
+          <div class="tl-title"><span class="when">DAY 0 · ON ARRIVAL</span>Company Enrichment</div>
+          <div class="tl-desc">Each new lead is hit with a Google search via Serper, then summarized by GPT-4o-mini into a five-to-fifteen-word "your X" phrase plus a plural industry keyword. Both write back to the row.</div>
+          <div class="tl-tech"><span class="tag">Sheets</span><span class="tag">Serper</span><span class="tag">GPT-4o-mini</span><span class="tag">JSON output</span></div>
+        </div>
+      </div>
+      <!-- 02 -->
+      <div class="timeline-row">
+        <div class="tl-num">02</div>
+        <div class="tl-content">
+          <div class="tl-title"><span class="when">DAY 0 · 30 MIN AFTER</span>Cold Email · E1</div>
+          <div class="tl-desc">First touch. Subject line is a single lowercase word. Body weaves the enriched phrase into a four-line note that ends with a soft ask. Captures the Gmail thread ID for every reply that follows.</div>
+          <div class="tl-tech"><span class="tag">Gmail</span><span class="tag">thread capture</span></div>
+        </div>
+      </div>
+      <!-- 03 -->
+      <div class="timeline-row" data-kind="webhook">
+        <div class="tl-num">03</div>
+        <div class="tl-content">
+          <div class="tl-title"><span class="when">DAY 2 — 12 · CALLS 1–4</span>Outbound Dialer</div>
+          <div class="tl-desc">One scenario covering all four call attempts via a 4-route router. The first module evaluates "is this row eligible for call N?" across N=1..4, and the matching route stamps the right call_id, status, and date columns. Runs every 15 minutes during outbound hours.</div>
+          <div class="tl-tech"><span class="tag">Retell API</span><span class="tag">Twilio SIP</span><span class="tag">router · 4 paths</span><span class="tag">~20 calls/day</span></div>
+        </div>
+      </div>
+      <!-- 04 -->
+      <div class="timeline-row" data-kind="webhook">
+        <div class="tl-num">04</div>
+        <div class="tl-content">
+          <div class="tl-title"><span class="when">EVENT · CALL_ANALYZED</span>Post-Call Webhook</div>
+          <div class="tl-desc">Fires the moment Retell finishes its post-call extraction. Branches on the agent's call_outcome field: qualified routes to SMS confirmation + Doc generation + an alert text to the internal team lead; callback writes a separate report; not-interested and email-requested log silently. Four routes, no fallback.</div>
+          <div class="tl-tech"><span class="tag">webhook · instant</span><span class="tag">router · 4 outcomes</span><span class="tag">Twilio SMS</span><span class="tag">Docs from template</span></div>
+        </div>
+      </div>
+      <!-- 05 -->
+      <div class="timeline-row">
+        <div class="tl-num">05</div>
+        <div class="tl-content">
+          <div class="tl-title"><span class="when">CALL 1 → VM · DAY 4</span>Post-Call 1 Email · E2</div>
+          <div class="tl-desc">If Call 1 hit voicemail or IVR, drop a three-sentence reply on the original Email 1 thread. A second filter on the AI SDR Leads tab confirms the call's outcome before the email actually fires.</div>
+          <div class="tl-tech"><span class="tag">Gmail · reply</span><span class="tag">cross-tab filter</span></div>
+        </div>
+      </div>
+      <!-- 06 -->
+      <div class="timeline-row">
+        <div class="tl-num">06</div>
+        <div class="tl-content">
+          <div class="tl-title"><span class="when">CALL 2 → VM · DAY 8</span>Post-Call 2 Email · E3</div>
+          <div class="tl-desc">Second voicemail escalation. Replies on the same thread, but this time attaches the case study PDF — fetched fresh from Drive at send time so the asset can be swapped without redeploying.</div>
+          <div class="tl-tech"><span class="tag">Drive · fetch</span><span class="tag">attachment</span></div>
+        </div>
+      </div>
+      <!-- 07 -->
+      <div class="timeline-row">
+        <div class="tl-num">07</div>
+        <div class="tl-content">
+          <div class="tl-title"><span class="when">CALL 3 · DAY 10</span>1st Non-VM Email · E4</div>
+          <div class="tl-desc">Pivots to a fresh thread. Calls Anthropic Claude Sonnet 4 to generate a per-prospect personalization phrase, then sends the cold email and captures the new thread ID. From here the cadence chains off this thread, not Email 1.</div>
+          <div class="tl-tech"><span class="tag">Anthropic Sonnet 4</span><span class="tag">new thread</span><span class="tag">thread capture</span></div>
+        </div>
+      </div>
+      <!-- 08 -->
+      <div class="timeline-row">
+        <div class="tl-num">08</div>
+        <div class="tl-content">
+          <div class="tl-title"><span class="when">CALL 4 · DAY 14</span>2nd Non-VM Email · E5</div>
+          <div class="tl-desc">A short referral ask, replied on the Email 4 thread. Anthropic generates a one-sentence bridge between the apology opener and a case-study reference; the body asks "is there someone else on the team?" and lets it breathe.</div>
+          <div class="tl-tech"><span class="tag">Anthropic Sonnet 4</span><span class="tag">reply</span></div>
+        </div>
+      </div>
+      <!-- 09 -->
+      <div class="timeline-row">
+        <div class="tl-num">09</div>
+        <div class="tl-content">
+          <div class="tl-title"><span class="when">DAY 18 · NEW THREAD</span>New Thread · E6</div>
+          <div class="tl-desc">Last attempt to surface in the inbox after prior threads went quiet. Fresh subject, fresh thread, thumbs-up-or-thumbs-down ask. Captures one more thread ID for the break-up reply.</div>
+          <div class="tl-tech"><span class="tag">Gmail · new thread</span></div>
+        </div>
+      </div>
+      <!-- 10 -->
+      <div class="timeline-row">
+        <div class="tl-num">10</div>
+        <div class="tl-content">
+          <div class="tl-title"><span class="when">DAY 22 · FINAL</span>Break-up Email · E7</div>
+          <div class="tl-desc">Replies on the Email 6 thread with the case study attached. Closes with a 30-day re-engagement promise. After this the lead exits the active cadence and only re-enters on manual reset.</div>
+          <div class="tl-tech"><span class="tag">Drive · fetch</span><span class="tag">attachment</span><span class="tag">terminal</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== AI LAYERS ===== -->
+<section class="section" id="ai">
+  <div class="wrap">
+    <header class="section-header">
+      <div class="meta">
+        <div class="eyebrow">§05 · LLMs in concert</div>
+        <h2 class="h-section">Two models, <em>three</em> jobs.</h2>
+      </div>
+      <p class="lede reveal">
+        Each model is picked for the job it does best, not for the resume. Retell runs GPT-4.1 Mini for live conversation because latency is the constraint that matters. Sonnet 4.6 handles structured extraction post-call where accuracy on edge cases is what matters. A separate Sonnet 4 instance writes per-prospect copy in the email cadence. The cheapest option, GPT-4o-mini, handles the bulk enrichment job where simple JSON is the whole product.
+      </p>
+    </header>
+
+    <div class="ai-layers reveal-stagger">
+      <div class="ai-card">
+        <span class="layer-num">Layer 01</span>
+        <h3>Live conversation &amp; extraction</h3>
+        <div class="model-line"><strong>GPT-4.1 Mini</strong> in-call · <strong>Claude Sonnet 4.6</strong> post-call</div>
+        <p>Georgia speaks on GPT-4.1 Mini — fast, cheap, fluent enough to hold a live cold call without dead air. The post-call extraction is a different problem: pull thirteen structured fields out of a free-form transcript, including nuanced ones like <span class="mono">user_sentiment</span> and <span class="mono">objections_raised</span>. Sonnet 4.6 takes that pass.</p>
+        <p>Both run inside Retell. The only thing my code has to do is write the agent prompt and define the extraction schema.</p>
+      </div>
+
+      <div class="ai-card">
+        <span class="layer-num">Layer 02</span>
+        <h3>Bulk enrichment · pre-call</h3>
+        <div class="model-line"><strong>OpenAI GPT-4o-mini</strong> · JSON-mode · 200 tokens</div>
+        <p>Every new lead gets searched on Serper, then handed to GPT-4o-mini with strict instructions: return JSON with two fields, a "your X" distinctive phrase and a plural industry keyword. The same fields get used by the cold email, the dialer's prompt to Georgia, and three of the email-cadence scenarios.</p>
+        <div class="prompt-snip">FIELD 1 — distinctive_phrase
+Start with "your" followed by a possessive descriptor.
+5 to 15 words only. No period.
+
+Example: "your community-focused approach to craft brewing"
+
+If you cannot find enough information, write:
+"your work in this space"</div>
+      </div>
+
+      <div class="ai-card">
+        <span class="layer-num">Layer 03</span>
+        <h3>Per-prospect personalization · in-cadence</h3>
+        <div class="model-line"><strong>Anthropic Claude Sonnet 4</strong> · 80–120 tokens</div>
+        <p>Two of the seven email scenarios call Sonnet 4 inline, mid-pipeline, to generate a single sentence sized exactly to the email. The 1st Non-VM email gets a "your X" phrase that bridges into the body; the 2nd gets a 15–30 word sentence that connects a voicemail apology to a case study reference.</p>
+        <p>Strict prompt rules: no hype words, no geography, no questions, no quotes. Output drops in clean.</p>
+      </div>
+
+      <div class="ai-card">
+        <span class="layer-num">Layer 04</span>
+        <h3>The fail-safe</h3>
+        <div class="model-line"><strong>Static fallbacks</strong> · enforced by prompt</div>
+        <p>Each prompt has an escape hatch. If GPT-4o-mini can't find enough about a company, it writes <span class="mono">"your work in this space"</span> and <span class="mono">"local businesses"</span>. If Sonnet returns junk, the email body still uses the static enriched phrase from the row, not the fresh generation — the AI is layered on, not load-bearing.</p>
+        <p>The system survives a model failure. That was the point of the design.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STACK ===== -->
+<section class="section" id="stack">
+  <div class="wrap">
+    <header class="section-header">
+      <div class="meta">
+        <div class="eyebrow">§06 · The stack</div>
+        <h2 class="h-section">Picked, not <em>collected.</em></h2>
+      </div>
+      <p class="lede reveal">
+        Twelve services. Each one earns its place. No "we already had it" in this list — it's all decisions.
+      </p>
+    </header>
+
+    <div class="stack-grid reveal-stagger">
+      <div class="stack-cell"><span class="role">Voice agent</span><span class="name">Retell AI</span><span class="why">Best-in-class outbound voice with a node-based conversation editor and webhooks where they need to be.</span></div>
+      <div class="stack-cell"><span class="role">In-call LLM</span><span class="name">GPT-4.1 Mini</span><span class="why">Cheap and fast enough to keep up with live human latency. The conversation does not need a frontier model.</span></div>
+      <div class="stack-cell"><span class="role">Post-call LLM</span><span class="name">Claude Sonnet 4.6</span><span class="why">Most reliable on structured extraction with edge-case handling. Pulls 13 fields from messy transcripts.</span></div>
+      <div class="stack-cell"><span class="role">Orchestration</span><span class="name">Make.com</span><span class="why">Faster to build than a backend, easier to hand off than custom code, with router primitives that map to outbound logic 1:1.</span></div>
+      <div class="stack-cell"><span class="role">Telephony</span><span class="name">Twilio</span><span class="why">SIP trunk to Retell, Messaging Service for SMS. A2P 10DLC and CNAM registered end-to-end.</span></div>
+      <div class="stack-cell"><span class="role">Email</span><span class="name">Gmail API</span><span class="why">Real inbox, real thread IDs, real deliverability. Reply-on-thread is a first-class operation.</span></div>
+      <div class="stack-cell"><span class="role">Database</span><span class="name">Google Sheets</span><span class="why">The lead sheet is the database. Every scenario reads and mutates the same row. Anyone can audit it.</span></div>
+      <div class="stack-cell"><span class="role">Reports</span><span class="name">Google Docs</span><span class="why">Per-call qualified-lead reports auto-generate from a token-replaced template, dropped into Drive folders by outcome.</span></div>
+      <div class="stack-cell"><span class="role">Bulk enrichment</span><span class="name">GPT-4o-mini</span><span class="why">Pennies per lead. JSON-mode means the output drops directly into the sheet without parsing.</span></div>
+      <div class="stack-cell"><span class="role">Personalization</span><span class="name">Claude Sonnet 4</span><span class="why">Better-than-generic copy in two of seven email scenarios. Strict prompt rules keep the voice consistent.</span></div>
+      <div class="stack-cell"><span class="role">Web search</span><span class="name">Serper.dev</span><span class="why">$0.001 per query. Three results is enough. The structured response means no scraping.</span></div>
+      <div class="stack-cell"><span class="role">Storage</span><span class="name">Google Drive</span><span class="why">Hosts the case study attachment and the report folder tree. Fetched fresh per send so assets are swappable.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FINGERPRINTS ===== -->
+<section class="section" id="craft">
+  <div class="wrap">
+    <header class="section-header">
+      <div class="meta">
+        <div class="eyebrow">§07 · The build</div>
+        <h2 class="h-section">Six choices <em>I</em> can defend.</h2>
+      </div>
+      <p class="lede reveal">
+        The kinds of decisions that don't show up in a feature list, but separate "I wired some tools together" from "I built a system."
+      </p>
+    </header>
+
+    <div class="fingerprints reveal-stagger">
+      <div class="fp">
+        <div class="fp-num">i.</div>
+        <div>
+          <h4>One dialer scenario for four call attempts</h4>
+          <p>The first instinct is four scenarios — Call 1, Call 2, Call 3, Call 4. I built one with a 4-block OR filter and a 4-route router. The filter evaluates the row's state to find which attempt is due; the router stamps the right column. Three fewer scenarios to maintain, one place to change cadence.</p>
+        </div>
+      </div>
+      <div class="fp">
+        <div class="fp-num">ii.</div>
+        <div>
+          <h4>State in the sheet, not the orchestrator</h4>
+          <p>Every scenario reads the row, decides if it should run, mutates one column, and exits. No central state machine, no queue. Adding a new touchpoint means writing a filter, not editing a workflow. The whole pipeline can be re-built one scenario at a time.</p>
+        </div>
+      </div>
+      <div class="fp">
+        <div class="fp-num">iii.</div>
+        <div>
+          <h4>Webhook on call_analyzed, never call_ended</h4>
+          <p>call_ended fires before Retell finishes the LLM extraction. By the time the webhook arrived, half the fields would still be empty. call_analyzed waits for the post-call pass to complete, so the router has every field it needs on first contact.</p>
+        </div>
+      </div>
+      <div class="fp">
+        <div class="fp-num">iv.</div>
+        <div>
+          <h4>The agent discloses she's an AI, every time</h4>
+          <p>Two reasons. Legally, it's the safe path. Practically, it's the right answer to the most common objection ("Are you a robot?"), so the script handles it warmly and converts it into the pitch. Hiding it would create the very objection the rest of the call has to absorb.</p>
+        </div>
+      </div>
+      <div class="fp">
+        <div class="fp-num">v.</div>
+        <div>
+          <h4>The model picks the agent's day-of-week</h4>
+          <p>The dialer passes <span class="mono">call_day</span> and <span class="mono">call_date</span> as dynamic variables on every call, so Georgia can say "today's Tuesday" without the agent prompt knowing what today is. Same agent prompt, different conversation, every day.</p>
+        </div>
+      </div>
+      <div class="fp">
+        <div class="fp-num">vi.</div>
+        <div>
+          <h4>Two LLMs in concert, not in competition</h4>
+          <p>GPT for the live call. Sonnet for the structured extraction. Sonnet again for personalized copy. GPT-4o-mini for the cheap bulk job. None of the choices were "we already use OpenAI" — each one was the cheapest model that met the bar for that job.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== OUTRO ===== -->
+<section class="outro" id="end">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow" style="margin-bottom: 32px;">§08 · End of case study</div>
+      <h2>Same shape, <em>different</em> domain.</h2>
+      <p class="lede" style="max-width: 56ch; margin-bottom: 56px;">
+        Georgia is outbound for a B2B services firm. I built the same shape for individual athletes — different stack, different audience, same problem of running personalized outreach at scale.
+      </p>
+      <div class="next-project">
+        <a href="blitz.html" class="next-link">
+          <span class="next-eyebrow">Next case study</span>
+          <span class="next-title">Blitz <em>—</em> NIL outbound, athlete-side</span>
+          <span class="next-meta">Next.js · Supabase · n8n · Anthropic · Resend</span>
+          <span class="next-arrow">→</span>
+        </a>
+      </div>
+      <p class="mono" style="margin-top: 64px; color: var(--ink-dim);">
+        Or <a href="index.html" style="color: var(--ink); border-bottom: 1px solid var(--accent); text-decoration: none; padding-bottom: 1px;">return to the index</a> for contact and other work.
+      </p>
+    </div>
+  </div>
+  <div class="wrap">
+    <footer>
+      <span>© 2026 Jacob Oliker</span>
+      <span>Georgia AI SDR is the property of its operating company.</span>
+      <span>Set in Fraunces · Inter Tight · JetBrains Mono</span>
+    </footer>
+  </div>
+</section>
+
+<script>
+/* ============================================================
+   SCROLL REVEAL
+   ============================================================ */
+// Mark body as JS-ready so the reveal CSS kicks in.
+// Without this class, all content is visible by default — graceful
+// degradation if JS is disabled or slow.
+document.body.classList.add('js-ready');
+
+// Above-fold content reveals immediately on load.
+requestAnimationFrame(() => {
+  document.querySelectorAll('.hero .reveal, .hero .reveal-stagger').forEach(el => el.classList.add('in'));
+});
+
+// Everything else reveals on scroll.
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+
+document.querySelectorAll('.reveal, .reveal-stagger').forEach(el => {
+  if (!el.classList.contains('in')) io.observe(el);
+});
+</script>
+
+</body>
+</html>
